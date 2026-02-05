@@ -1,0 +1,3 @@
+assessment_model:
+  store: _assessment_model
+  script: script_assessment_model.R
