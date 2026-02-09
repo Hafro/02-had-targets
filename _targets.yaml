@@ -1,3 +1,6 @@
 assessment_model:
   store: _assessment_model
   script: script_assessment_model.R
+plots_and_tables:
+  store: _plots_and_tables
+  script: script_plots_and_tables.R

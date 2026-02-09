@@ -1,4 +1,7 @@
 /_targets/
 /_assessment_model/
+/_plots_and_tables/
 /*.duckdb
 /marmap*
+
+/figs/
