@@ -3509,14 +3509,13 @@
       "License": "GPL-2",
       "Roxygen": "list(markdown = TRUE)",
       "RoxygenNote": "7.0.2",
+      "Author": "Jamie Lentin [aut, cre] (ORCID: <https://orcid.org/0000-0001-5727-2996>), Bjarki Thor Elvarsson [aut] (ORCID: <https://orcid.org/0000-0001-5855-1188>), William Butler [aut] (ORCID: <https://orcid.org/0000-0002-3286-0748>), Pamela J. Woods [aut], Marine and Freshwater Research Institute (Iceland) [cph]",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "pax",
       "RemoteUsername": "hafro",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "4053729f8dbea4f0872d4659549c044ff67f5044",
-      "NeedsCompilation": "no",
-      "Author": "Jamie Lentin [aut, cre] (ORCID: <https://orcid.org/0000-0001-5727-2996>), Bjarki Thor Elvarsson [aut] (ORCID: <https://orcid.org/0000-0001-5855-1188>), William Butler [aut] (ORCID: <https://orcid.org/0000-0002-3286-0748>), Pamela J. Woods [aut], Marine and Freshwater Research Institute (Iceland) [cph]"
+      "RemoteRepo": "pax",
+      "RemoteRef": "main",
+      "RemoteSha": "312774b6d7f51a1a47732e830c27b589c18c8586"
     },
     "pillar": {
       "Package": "pillar",
