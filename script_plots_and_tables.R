@@ -13,12 +13,17 @@ tar_option_set(
   packages = c(),
 )
 
-pax_db <- tar_read(pax_db, store = "_assessment_model")
-
 # TODO: Seems a bit naff, but somewhat standard
 dir.create("figs", showWarnings = FALSE, recursive = TRUE)
 
 list(
+  # Open database from assessment_model
+  tar_target(
+    pax_db,
+    pax::pax_connect("_assessment_model/objects/pax_db"),
+    format = pax::pax_tar_format_duckdb()
+  ),
+
   tar_target(
     table_nb_lnd_by_yr,
     ft_nb_lnd_by_yr(pax_db),
