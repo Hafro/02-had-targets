@@ -1,0 +1,93 @@
+---
+title: "HADDOCK"
+subtitle: "*Melanogrammus aeglefinus*"
+description: " <br> Assessment report"
+author: "Marine and Freshwater Research Institute, Iceland"
+date: "7. June 2024"
+date-format: D MMMM YYYY
+#title: "\n\n10\tHaddock in 5a"
+format:
+  html:
+    theme: theme/techreport.scss
+    fontsize: 1.1em
+    linestretch: 1.7
+    embed-resources: true
+    toc: true
+    toc_float: true
+    title-block-banner: "#fff"
+    title-block-banner-color: "#3f6658"
+  # docx:
+  #   reference-doc: ices_template.docx
+#knitr:
+#  opts_knit:
+#    root.dir: '..'
+language:
+  en:
+    title-block-author-single: "Published by"
+execute:
+  echo: false
+  warning: false
+  message: false
+# bookdown::html_document2: default
+#  officedown::rdocx_document:
+    # tables:
+    #   caption:
+    #     pre: 'Table '
+#    fig_caption: yes
+#    keep_md: yes
+#    number_sections: true
+  #reference_docx: 02-Haddock_TR.docx
+#    reference_docx: taekniskyrsla18en.docx
+  #reference_docx: ices_template2.docx
+#  pdf_document: default
+bibliography: library.bib
+params:
+  year_end: NULL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE,
+                      message = FALSE, error = FALSE,
+                      fig.width = 1.5*6, fig.height = 1.5*5*6/10,
+                      #out.width = 550,
+                      cache = FALSE)
+options(knitr.kable.NA = '')
+
+i <- 0
+tyr <- params$year_end
+ggplot2::theme_set(ggplot2::theme_bw())
+
+pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C",
+           "#FB9A99", "#E31A1C", "#FDBF6F", "#FF7F00",
+           "#CAB2D6", "#6A3D9A", "#FFFF99", "#B15928")
+  pal <- rep(pal, 1000)
+```
+
+```{r message=FALSE, warning=FALSE}
+# NB: params are handed to quarto via. YAML, so cannot contain complex structures
+#     Have to load them out of the current store instead
+targets::tar_load(c(
+  snippet_techreport_general_en,
+  snippet_techreport_fishery_en,
+  fig_catch_dist_plot_en,
+  fig_catch_dist_selectyrs_plot_en
+))
+```
+
+## General information
+
+```{r, results='asis', echo=FALSE}
+cat(knitr::knit_child(snippet_techreport_general_en, quiet=T), sep = "\n")
+```
+
+## Fishery
+
+```{r, results='asis', echo=FALSE}
+cat(knitr::knit_child(snippet_techreport_fishery_en, quiet=T), sep = "\n")
+```
+
+```{r}
+#| label: fig-catchdistplot
+#| fig-cap: 'Haddock in 5a. Spatial distribution of catches by all gears for selected years.'
+knitr::include_graphics(fig_catch_dist_selectyrs_plot_en)
+```
