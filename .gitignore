@@ -1,7 +1,7 @@
 /_targets/
 /_advice/
 /_assessment_model/
-/_plots_and_tables/
+/_techreport/
 /*.duckdb
 /marmap*
 
