@@ -12,6 +12,7 @@ format:
 #   docx:
 #     reference-doc: test.docx
 # #    title-block-banner: true
+language: _language_advice_is.yml
 crossref:
   fig-title: ''
   #fig-labels: ''
