@@ -1,0 +1,2 @@
+# The exploratory_models shouldn't be scanned for all dependencies
+/exploratory_models/
