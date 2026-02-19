@@ -25,7 +25,7 @@ crossref:
   fig-labels: arabic
   fig-prefix: Mynd
   tbl-prefix: Tafla
-language: _language_techreport_is.yml
+language: _language_is.yml
 bibliography: library.bib
 params:
   year_end: NULL
