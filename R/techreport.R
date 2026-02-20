@@ -30,8 +30,7 @@ ft_catch_by_location <- function(
 
 ft_catch_dist_plot <- function(
   pcon,
-  year_start = max(year_start, year_end - 22),
-  lang = "en"
+  year_start = max(year_start, year_end - 22)
 ) {
   out <- pax::pax_map_base() |>
     pax::pax_map_layer_depth(dplyr::tbl(pcon, "ocean_depth")) |>
@@ -42,16 +41,12 @@ ft_catch_dist_plot <- function(
       na.fill = -50,
       breaks = c(0, 1, 2, seq(3, 20, by = 3), 40, 60)
     )
-  if (lang == "is") {
-    out <- out + ggplot2::labs(fill = 'Afli (t/nm2)')
-  }
   return(out)
 }
 
 ft_catch_dist_selectyrs_plot <- function(
   pcon,
-  years,
-  lang = "en"
+  years
 ) {
   out <- pax::pax_map_base(low_res = TRUE) |>
     pax::pax_map_layer_depth(dplyr::tbl(pcon, "ocean_depth")) |>
@@ -65,8 +60,5 @@ ft_catch_dist_selectyrs_plot <- function(
     ) +
     ggplot2::theme(legend.position = c(0.8, 0.2))
 
-  if (lang == "is") {
-    out <- out + ggplot2::labs(fill = 'Afli (t/nm2)')
-  }
   return(out)
 }

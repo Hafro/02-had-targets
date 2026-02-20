@@ -67,8 +67,8 @@ pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C",
 # NB: params are handed to quarto via. YAML, so cannot contain complex structures
 #     Have to load them out of the current store instead
 targets::tar_load(c(
-  fig_catch_dist_plot_en,
-  fig_catch_dist_selectyrs_plot_en
+  fig_catch_dist_plot,
+  fig_catch_dist_selectyrs_plot
 ))
 ```
 
@@ -85,5 +85,6 @@ The fishery for haddock in 5a has not changed substantially in recent years, but
 ```{r}
 #| label: fig-catchdistplot
 #| fig-cap: 'Haddock in 5a. Spatial distribution of catches by all gears for selected years.'
-knitr::include_graphics(fig_catch_dist_selectyrs_plot_en)
+fig_catch_dist_selectyrs_plot + ggplot2::labs(
+)
 ```
