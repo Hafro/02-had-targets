@@ -114,6 +114,8 @@ list(
     ft_input_data_had(
       year_start,
       year_end,
+      age_start = 0,
+      age_end = age_end,
       input_data_comm_index,
       input_data_igfs_index,
       input_data_agfs_index,

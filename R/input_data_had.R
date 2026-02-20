@@ -1,6 +1,8 @@
 ft_input_data_had <- function(
   year_start,
   year_end,
+  age_start = 1,
+  age_end = max(input_data_comm_index$age),
   input_data_comm_index,
   input_data_igfs_index,
   input_data_agfs_index,
@@ -8,7 +10,7 @@ ft_input_data_had <- function(
 ) {
   tidyr::expand_grid(
     year = year_start:year_end,
-    age = 0:max(input_data_comm_index$age)
+    age = age_start:age_end
   ) |>
     dplyr::full_join(input_data_comm_index) |>
     dplyr::rename(catch = n, catch_weight = mw) |>
