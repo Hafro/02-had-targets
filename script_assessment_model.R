@@ -14,10 +14,6 @@ tar_option_set(
 tar_source("config.R")
 tar_source() # Source R/*.R
 
-tar_option_set(
-  format = pax::pax_tar_format_parquet(),
-)
-
 list(
   ## Populate local database
   if (nzchar(Sys.getenv("PAX_SOURCE_DB"))) {
@@ -46,7 +42,8 @@ list(
       pax_db,
       sampling_type = 30,
       prediction_length_range = 1:150
-    )
+    ),
+    format = pax::pax_tar_format_parquet()
   ),
   tar_target(
     input_data_maturity_key,
@@ -58,7 +55,8 @@ list(
         N = c(102, 103, 104, 105, 111, 113),
         S = NULL
       ),
-    )
+    ),
+    format = pax::pax_tar_format_parquet()
   ),
   tar_target(
     input_data_igfs_index,
@@ -75,7 +73,8 @@ list(
         N = c(102, 103, 104, 105, 111, 113),
         S = NULL
       )
-    )
+    ),
+    format = pax::pax_tar_format_parquet()
   ),
   tar_target(
     input_data_agfs_index,
@@ -86,7 +85,8 @@ list(
       tow_number = 0:75,
       gear_id_filter = 77:78,
       strata_name = "new_strata_autumn"
-    )
+    ),
+    format = pax::pax_tar_format_parquet()
   ),
   tar_target(
     input_data_comm_index,
@@ -102,14 +102,16 @@ list(
         DSE = c('PSE', 'DSE')
       ),
       scale_by_landings = TRUE
-    )
+    ),
+    format = pax::pax_tar_format_parquet()
   ),
   tar_target(
     # TODO: Starts in 1903, not 1970
     input_data_landings,
     ft_input_data_landings(
       pax_db
-    )
+    ),
+    format = pax::pax_tar_format_parquet()
   ),
   tar_target(
     input_data,
@@ -122,7 +124,8 @@ list(
       input_data_igfs_index,
       input_data_agfs_index,
       input_data_landings
-    )
+    ),
+    format = pax::pax_tar_format_parquet()
   ),
 
   ## Generate muppet input from data
