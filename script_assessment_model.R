@@ -2,18 +2,11 @@
 library(targets)
 library(tarchetypes)
 
+tar_source("config.R")
 tar_source() # Source R/*.R
-
-species <- 2
-year_start <- 1979
-year_end <- lubridate::year(Sys.Date())
-age_end <- 14
-TAC <- 76415
-HR_MGT <- 0.35
 
 tar_option_set(
   format = pax::pax_tar_format_parquet(),
-  packages = c(),
 )
 
 list(
@@ -362,10 +355,10 @@ list(
           x[["data/hadprognosis.dat.opt"]] <-
             readLines(muppet_input_hadprognosis_biorule_adviceyear) |>
             rmuppet:::line_replace(0, '# CurrentAssessmentErrmultiplier') |>
-            rmuppet:::line_replace(TAC / 1e3, '# Last TAC') |>
-            # TODO: (TAC - curr_catch$c/1000)/1e3
+            rmuppet:::line_replace(tac / 1e3, '# Last TAC') |>
+            # TODO: (tac - curr_catch$c/1000)/1e3
             rmuppet:::line_replace(
-              (TAC - 10) / 1e3,
+              (tac - 10) / 1e3,
               '# Tac left Icelandic fishing years'
             ) |>
             rmuppet:::line_replace(HR_MGT, '# HarvestRate')

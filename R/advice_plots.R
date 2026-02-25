@@ -1,4 +1,8 @@
-ft_advice_plot_landings <- function(advice_table_landings, lang = "en") {
+ft_advice_plot_landings <- function(
+  advice_table_landings,
+  year_end,
+  lang = "en"
+) {
   gear.land <-
     advice_table_landings |>
     dplyr::mutate(gear = ifelse(is.na(gear), 'Other', gear)) |>

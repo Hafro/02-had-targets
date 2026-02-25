@@ -2,16 +2,8 @@
 library(targets)
 library(tarchetypes)
 
+tar_source("config.R")
 tar_source() # Source R/*.R
-
-species <- 2
-year_start <- 1979
-year_end <- lubridate::year(Sys.Date())
-age_end <- 14
-
-tar_option_set(
-  packages = c(),
-)
 
 # TODO: Seems a bit naff, but somewhat standard
 dir.create("figs", showWarnings = FALSE, recursive = TRUE)

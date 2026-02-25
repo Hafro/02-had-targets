@@ -55,7 +55,7 @@ aðgerðarmörkum (MSY B~trigger~), gátmörkum (B~pa~) og varúðarmörkum (B~l
 ```{r}
 #| echo: false
 ggiraph::girafe(ggobj =
-  ft_advice_plot_landings(advice_table_landings, lang = lang),
+  ft_advice_plot_landings(advice_table_landings, year_end = params$year_end, lang = lang),
   #TODO: + recr('en') + fpl('en') + ssb('en'),
                 options = list(
                   #ggiraph::opts_hover_inv(css = "opacity:0.7;"),
