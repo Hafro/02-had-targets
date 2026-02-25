@@ -58,3 +58,10 @@ ggiraph::girafe(ggobj =
                   ggiraph::opts_zoom(max = 5)
                 ))
 ```
+
+```{r}
+#| echo: false
+#| output: asis
+
+cat(hr_git_revision(as_html = TRUE))
+```

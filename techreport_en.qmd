@@ -74,3 +74,10 @@ hr_techreport_fig_catchdistplot(
   lang = lang
 )
 ```
+
+```{r}
+#| echo: false
+#| output: asis
+
+cat(hr_git_revision(as_html = TRUE))
+```
