@@ -14,3 +14,9 @@ renv::restore()
 ```
 
 Then you can build the advice with the `run.R` script.
+
+The [ROracle](https://cran.r-project.org/package=ROracle) package will not be installed by default, add it with:
+
+```r
+install.packages("ROracle")
+```
