@@ -49,7 +49,7 @@ list(
       regions = list(
         S = c(101, 107, 106, 108, 109, 114),
         N = c(102, 103, 104, 105, 111, 113),
-        S = NULL
+        S = pax_add_other()
       ),
     ),
     format = pax::pax_tar_format_parquet()
@@ -67,7 +67,7 @@ list(
       regions = list(
         S = c(101, 107, 106, 108, 109, 114),
         N = c(102, 103, 104, 105, 111, 113),
-        S = NULL
+        S = pax_add_other()
       )
     ),
     format = pax::pax_tar_format_parquet()
