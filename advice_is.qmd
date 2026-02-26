@@ -22,6 +22,7 @@ params:
   tac: NULL
   tac_last_year: NULL
   year_end: NULL
+  publication_date: 2001-01-01
 ---
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
@@ -35,8 +36,13 @@ targets::tar_load(c(
 #| echo: false
 #| output: asis
 
-tidypax::banner_func(tyr = params$year_end, tac = params$tac,tac_last_year = params$tac_last_year, publication_date = '7. júní 2024.',lang = 'en')
-
+hr_advice_banner(
+  publication_date = params$publication_date,
+  tac = params$tac,
+  tac_last_year = params$tac_last_year,
+  year_end = params$year_end,
+  lang = lang
+)
 ```
 
 ## Advice

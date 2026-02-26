@@ -41,6 +41,7 @@ list(
     advice_is,
     path = "advice_is.qmd",
     execute_params = list(
+      publication_date = publication_date,
       tac = tac,
       tac_last_year = tac_last_year,
       year_end = year_end
