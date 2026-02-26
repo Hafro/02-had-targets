@@ -10,7 +10,6 @@ format:
     linestretch: 1.9
     embed-resources: true
 lang: is
-language: _language_is.yml
 crossref:
   fig-title: ''
   #fig-labels: ''
