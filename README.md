@@ -20,3 +20,10 @@ The [ROracle](https://cran.r-project.org/package=ROracle) package will not be in
 ```r
 install.packages("ROracle")
 ```
+
+## Development
+
+### Code formatting
+
+This projects uses [Air](https://posit-dev.github.io/air/), you may need to configure your editor accordingly.
+See https://posit-dev.github.io/air/editors.html
