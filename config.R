@@ -1,6 +1,7 @@
 species <- 2
 year_start <- 1979
 year_end <- lubridate::year(Sys.Date())
+assessment_year <- year_end - 1
 age_end <- 14
 
 publication_date <- "2024-06-07"
