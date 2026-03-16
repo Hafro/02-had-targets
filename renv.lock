@@ -2852,11 +2852,11 @@
       "RoxygenNote": "7.0.2",
       "Author": "Jamie Lentin [aut, cre] (ORCID: <https://orcid.org/0000-0001-5727-2996>), Bjarki Thor Elvarsson [aut] (ORCID: <https://orcid.org/0000-0001-5855-1188>), William Butler [aut] (ORCID: <https://orcid.org/0000-0002-3286-0748>), Pamela J. Woods [aut], Marine and Freshwater Research Institute (Iceland) [cph]",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
       "RemoteUsername": "hafro",
       "RemoteRepo": "hafroreports",
       "RemoteRef": "main",
-      "RemoteSha": "50ed9e01ee255d8a467342ada05bfe8418ad4be2",
+      "RemoteSha": "37adca077699031ed086ac056f830b9382f1d18a",
+      "RemoteHost": "api.github.com",
       "Remotes": "github::hafro/SAMutils, github::fishfollower/SAM/stockassessment"
     },
     "haven": {
@@ -4374,11 +4374,11 @@
       "RoxygenNote": "7.0.2",
       "Author": "Jamie Lentin [aut, cre] (ORCID: <https://orcid.org/0000-0001-5727-2996>), Bjarki Thor Elvarsson [aut] (ORCID: <https://orcid.org/0000-0001-5855-1188>), William Butler [aut] (ORCID: <https://orcid.org/0000-0002-3286-0748>), Pamela J. Woods [aut], Marine and Freshwater Research Institute (Iceland) [cph]",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
       "RemoteUsername": "hafro",
       "RemoteRepo": "pax",
       "RemoteRef": "main",
-      "RemoteSha": "88372829becd7ccc37d141ccceaf85ce6dae7d62"
+      "RemoteSha": "8b6dd4a42ae819ce7de3908d376cc83799527f26",
+      "RemoteHost": "api.github.com"
     },
     "pillar": {
       "Package": "pillar",
