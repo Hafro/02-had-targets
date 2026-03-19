@@ -45,7 +45,7 @@ list(
     input_data_maturity_key,
     hr_input_data_maturity_key(
       pax_db,
-      lgroup = seq(0, 200, 5),
+      lgroups = seq(0, 200, 5),
       regions = list(
         S = c(101, 107, 106, 108, 109, 114),
         N = c(102, 103, 104, 105, 111, 113),
