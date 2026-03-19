@@ -8,3 +8,5 @@
 /figs/
 /advice*.html
 /techreport*.html
+
+/exploratory_models/*/_targets/
