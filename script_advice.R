@@ -30,22 +30,11 @@ list(
   tar_quarto(
     advice_en,
     path = "advice_en.qmd",
-    execute_params = list(
-      tac = tac,
-      tac_last_year = tac_last_year,
-      year_end = year_end
-    ),
     quiet = FALSE
   ),
   tar_quarto(
     advice_is,
     path = "advice_is.qmd",
-    execute_params = list(
-      publication_date = publication_date,
-      tac = tac,
-      tac_last_year = tac_last_year,
-      year_end = year_end
-    ),
     quiet = FALSE
   )
 )

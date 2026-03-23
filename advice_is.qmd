@@ -17,14 +17,10 @@ execute:
   echo: false
   warning: false
   message: false
-params:
-  tac: NULL
-  tac_last_year: NULL
-  year_end: NULL
-  publication_date: 2001-01-01
 ---
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
+source("config.R")
 source("quarto_setup.R")
 targets::tar_load(c(
   advice_table_landings
@@ -36,18 +32,17 @@ targets::tar_load(c(
 #| output: asis
 
 hr_advice_banner(
-  publication_date = params$publication_date,
-  tac = params$tac,
-  tac_last_year = params$tac_last_year,
-  year_end = params$year_end,
-  lang = lang
+  publication_date = publication_date,
+  tac = tac,
+  tac_last_year = tac_last_year,
+  year_end = year_end
 )
 ```
 
 ## Advice
 
-Hafrannsóknastofnun og Alþjóðahafrannsóknaráðið leggja til, í samræmi við aflareglu íslenskra stjórnvalda, að afli fiskveiðiárið `r params$year_end`/`r params$year_end+1` verði ekki
-meiri en `r prettyNum(params$tac, big.mark = " ")` tonn.
+Hafrannsóknastofnun og Alþjóðahafrannsóknaráðið leggja til, í samræmi við aflareglu íslenskra stjórnvalda, að afli fiskveiðiárið `r year_end`/`r year_end+1` verði ekki
+meiri en `r hr_red_dot_number(tac)` tonn.
 
 ## Stofnþróun
 
@@ -57,7 +52,7 @@ aðgerðarmörkum (MSY B~trigger~), gátmörkum (B~pa~) og varúðarmörkum (B~l
 ```{r}
 #| echo: false
 ggiraph::girafe(ggobj =
-  hr_advice_plot_landings(advice_table_landings, year_end = params$year_end, lang = lang),
+  hr_advice_plot_landings(advice_table_landings, year_end = year_end, lang = lang),
   #TODO: + recr('en') + fpl('en') + ssb('en'),
                 options = list(
                   #ggiraph::opts_hover_inv(css = "opacity:0.7;"),

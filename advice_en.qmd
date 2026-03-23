@@ -17,14 +17,10 @@ execute:
   echo: false
   warning: false
   message: false
-params:
-  tac: NULL
-  tac_last_year: NULL
-  year_end: NULL
-  publication_date: 2001-01-01
 ---
 
 ```{r echo=FALSE, warning=FALSE, message=FALSE}
+source("config.R")
 source("quarto_setup.R")
 targets::tar_load(c(
   advice_table_landings
@@ -36,17 +32,16 @@ targets::tar_load(c(
 #| output: asis
 
 hr_advice_banner(
-  publication_date = params$publication_date,
-  tac = params$tac,
-  tac_last_year = params$tac_last_year,
-  year_end = params$year_end,
-  lang = lang
+  publication_date = publication_date,
+  tac = tac,
+  tac_last_year = tac_last_year,
+  year_end = year_end
 )
 ```
 
 ## Advice
 
-MFRI and ICES advise that when the Icelandic management plan is applied, catches in the fishing year `r params$year_end`/`r params$year_end+1` should be no more than `r prettyNum(params$tac, big.mark = " ")` tonnes.
+MFRI and ICES advise that when the Icelandic management plan is applied, catches in the fishing year `r year_end`/`r year_end+1` should be no more than `r hr_red_dot_number(tac)` tonnes.
 
 ## Stock development
 
