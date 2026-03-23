@@ -70,8 +70,7 @@ The fishery for haddock in 5a has not changed substantially in recent years, but
 #| fig-cap: 'Haddock in 5a. Spatial distribution of catches by all gears for selected years.'
 hr_techreport_fig_catchdistplot(
   pax_db,
-  years = fig_catchdistplot_selectyrs,
-  lang = lang
+  years = fig_catchdistplot_selectyrs
 )
 ```
 
