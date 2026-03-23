@@ -24,7 +24,11 @@ list(
   ),
 
   ## Read input_data from main assessment model
-  tar_target(file_input_data, "../../_assessment_model/objects/input_data", format = "file"),
+  tar_target(
+    file_input_data,
+    "../../_assessment_model/objects/input_data",
+    format = "file"
+  ),
   tar_target(
     input_data,
     # NB: Assume that the main pipeline uses parquet format, read it back in
