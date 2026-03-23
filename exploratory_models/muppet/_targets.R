@@ -276,7 +276,7 @@ list(
               (tac - 10) / 1e3,
               '# Tac left Icelandic fishing years'
             ) |>
-            rmuppet:::line_replace(HR_MGT, '# HarvestRate')
+            rmuppet:::line_replace(ref_points$HR_mgt, '# HarvestRate')
 
           x[["params/icehad.dat.opt"]] <-
             x[["params/icehad.dat.opt"]] |>

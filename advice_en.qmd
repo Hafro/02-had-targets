@@ -23,7 +23,8 @@ execute:
 source("config.R")
 source("quarto_setup.R")
 targets::tar_load(c(
-  advice_table_landings
+  advice_table_landings,
+  assessment_results
 ))
 ```
 
@@ -49,15 +50,18 @@ Fishing pressure is above HR~MSY~ and HR~pa~ and below HR~lim~; spawning stock s
 
 ```{r}
 #| echo: false
+library(patchwork)
 ggiraph::girafe(ggobj =
-  hr_advice_plot_landings(advice_table_landings, year_end = params$year_end, lang = lang),
-  #TODO: + recr('en') + fpl('en') + ssb('en'),
-                options = list(
-                  #ggiraph::opts_hover_inv(css = "opacity:0.7;"),
-                  #ggiraph::opts_hover(css = "stroke-width:2;"),
-                  #ggiraph::opts_sizing(width = .7),
-                  ggiraph::opts_zoom(max = 5)
-                ))
+  hr_advice_plot_landings(advice_table_landings, assessment_year = assessment_year) +
+  hr_advice_plot_recruitment(assessment_results, assessment_year = assessment_year) +
+  hr_advice_plot_fpl(assessment_results, assessment_year = assessment_year, ref_points = ref_points) +
+  hr_advice_plot_ssb(assessment_results, assessment_year = assessment_year, ref_points = ref_points),
+  options = list(
+    #ggiraph::opts_hover_inv(css = "opacity:0.7;"),
+    #ggiraph::opts_hover(css = "stroke-width:2;"),
+    #ggiraph::opts_sizing(width = .7),
+    ggiraph::opts_zoom(max = 5)
+  ))
 ```
 
 ```{r}
