@@ -30,3 +30,89 @@ ref_points <- list(
   F_mgt_upper = NA,
   F_mgt_lower = NA
 )
+
+basis_table <- dplyr::bind_rows(
+  c(
+    id.is = 'Forsendur ráðgjafar',
+    id.en = 'Basis of the advice',
+    desc.is = 'Aflaregla',
+    desc.en = 'Management plan'
+  ),
+  c(
+    id.is = 'Aflaregla',
+    id.en = 'Management plan',
+    desc.is = 'Aflamark sett sem 35 % af viðmiðunarstofni (lífmassi 45 cm og stærri ýsu) á stofnmatsári',
+    desc.en = 'TAC set as 35% of reference biomass (biomass of 45 cm and larger) in the assessment year'
+  ),
+  c(
+    id.is = 'Stofnmat',
+    id.en = 'Assessment type',
+    desc.is = 'Tölfræðilegt aldurs-aflalíkan',
+    desc.en = 'Statistical catch at age model'
+  ),
+  c(
+    id.is = 'Inntaksgögn',
+    id.en = 'Input data',
+    desc.is = 'Aldursgreindur afli og aldursgreindar fjöldavísitölur úr stofnmælingum (SMB, SMH)',
+    desc.en = 'Catch in numbers and age disaggregated indices (IS-SMB, IS-SMH)'
+  )
+)
+
+ref_points_basis_table <- dplyr::bind_rows(
+  c(
+    render = 'MGT B~trigger~',
+    approach.is = 'Aflaregla',
+    approach.en = 'Management plan',
+    ref_point = 'MGT_btrigger',
+    basis.is = 'Aflaregla',
+    basis.en = 'From the management plan'
+  ),
+  c(
+    render = 'HR~MGT~',
+    approach.is = 'Aflaregla',
+    approach.en = 'Management plan',
+    ref_point = 'HR_mgt',
+    basis.is = 'Aflaregla',
+    basis.en = 'From the management plan'
+  ),
+  c(
+    render = 'HR~MSY~',
+    approach.is = 'Hámarksafrakstur',
+    approach.en = 'MSY approach',
+    ref_point = 'HR_msy',
+    basis.is = 'HR~pa~',
+    basis.en = 'HR~pa~'
+  ),
+  c(
+    render = 'MSY B~trigger~',
+    approach.is = 'Hámarksafrakstur',
+    approach.en = 'MSY approach',
+    ref_point = 'MSY_btrigger',
+    basis.is = 'B~pa~',
+    basis.en = 'B~pa~'
+  ),
+  c(
+    render = 'B~lim~',
+    approach.is = 'Varúðarnálgun',
+    approach.en = 'Precautionary approach',
+    ref_point = 'B_lim',
+    basis.is = 'B~loss~',
+    basis.en = 'B~loss~'
+  ),
+  c(
+    render = 'B~pa~',
+    approach.is = 'Varúðarnálgun',
+    approach.en = 'Precautionary approach',
+    ref_point = 'B_pa',
+    basis.is = 'B~lim~ x e^1.645 * 0.2^',
+    basis.en = 'B~lim~ x e^1.645 * 0.2^'
+  ),
+  c(
+    render = 'HR~pa~',
+    approach.is = 'Varúðarnálgun',
+    approach.en = 'Precautionary approach',
+    ref_point = 'HR_pa',
+    basis.is = 'Veiðihlutfall sem leiðir til P(SSB > B~lim~) = 95 % með B~trigger~',
+    basis.en = 'HR leading to P(SSB > B~lim~) = 95 % with B~trigger~'
+  )
+)

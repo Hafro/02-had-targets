@@ -64,6 +64,19 @@ ggiraph::girafe(ggobj =
   ))
 ```
 
+::: {style="font-size: 11pt;line-height: normal;"}
+**Haddock.** Catch by gear type, recruitment, fishing mortality and harvest rate, reference stock biomass (B~45+ cm~) and spawning stock biomass (SSB). Shaded areas and error bars show 95% confidence intervals. All biomass reference points refer to SSB levels.
+:::
+
+## Basis of the assessment and reference points
+```{r}
+hr_advice_basis_table(basis_table)
+```
+
+```{r}
+#| render: 'asis'
+hr_advice_ref_table(ref_points, ref_points_basis_table)
+```
 ```{r}
 #| echo: false
 #| output: asis
