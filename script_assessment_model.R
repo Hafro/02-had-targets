@@ -153,5 +153,133 @@ list(
       sam_conf
     ),
     format = 'rds'
+  ),
+
+  ## Update advice with current assessment
+  tar_target(
+    historical_advice_file,
+    "data/advice_hist.csv",
+    format = "file"
+  ),
+  tar_target(
+    advice_hist,
+    hr_update_hist(
+      historical_advice_file,
+      assessment_year = assessment_year,
+      advice = SAMutils::rby.sam(sam_fit$fit, run_ref_bio = TRUE) |>
+        dplyr::filter(variable == 'ref_bio', year == assessment_year) |>
+        dplyr::mutate(median = round(0.35 * median)) |>
+        dplyr::pull(median),
+      advice_basis.en = 'TAC 0.35 x B45+cm',
+      advice_basis.is = '35 % aflaregla'
+    )
+  ),
+
+  ## Update TAC with current assessment
+  tar_target(
+    historical_tac_file,
+    "data/tac_hist.csv",
+    format = "file"
+  ),
+  tar_target(
+    tac_hist,
+    hr_update_hist(
+      historical_tac_file,
+      assessment_year = assessment_year,
+      ices_area = '5a',
+      tac = advice_hist |>
+        filter(assessment_year == .env$assessment_year) |>
+        dplyr::pull(advice)
+    ),
+    format = pax::pax_tar_format_parquet()
+  ),
+
+  ## Prognosis
+  tar_target(
+    prognosis,
+    {
+      starting_catch <-
+        dplyr::tbl(pax_db, "landings") |>
+        dplyr::filter(
+          species == .env$species,
+          ices_area == '5a',
+          year == local(assessment_year - 1),
+          # i.e. select the first half of the fishing year
+          (is.na(month) || month >= 9),
+        ) |>
+        dplyr::summarise(l = sum(catch) / 1e3) |>
+        dplyr::pull(l)
+      tac_previous <- tac_hist[
+        tac_hist$assessment_year == assessment_year - 1,
+        "tac"
+      ]
+      tac_latest <- tac_hist[tac_hist$assessment_year == assessment_year, "tac"]
+
+      x <- stockassessment::forecast(
+        sam_fit$fit,
+        catchval = c(
+          ## This years catch (remainder of current fishing year TAC at the beginning of this year + 1/3 of next years TAC)
+          tac_previous - starting_catch + tac_latest / 3,
+          ## Next years TAC
+          tac_latest,
+          NA
+        ),
+        fval = c(
+          NA,
+          NA,
+          0.45
+        ),
+        deterministic = TRUE #, ave.years = max(res$fit$data$years) + (-0)
+      )
+      stockassessment::forecast(
+        sam_fit$fit,
+        catchval = c(
+          ## This years catch (remainder of current fishing year TAC at the beginning of this year + 1/3 of next years TAC)
+          tac_previous - starting_catch + tac_latest / 3,
+          ## Next years TAC
+          2 / 3 * tac_latest + attr(x, 'tab')[2, 'IS_refbio:median'] * 0.35 / 3,
+          NA
+        ),
+        fval = c(
+          NA,
+          NA,
+          0.45
+        ),
+        deterministic = TRUE #, ave.years = max(res$fit$data$years) + -(0)
+      )
+    },
+    format = "rds"
+  ),
+  tar_target(
+    stock_dev,
+    as.data.frame(attr(prognosis, 'tab')) |>
+      dplyr::select(dplyr::contains('median')) |>
+      dplyr::mutate(
+        year = assessment_year:(assessment_year + n() - 1),
+        ssb_ratio = (`ssb:median` / lag(`ssb:median`)),
+      ) |>
+      tidyr::pivot_longer(-year) |>
+      dplyr::mutate(
+        name = gsub(':median', '', name),
+        name = ifelse(name == "IS_HR", "HR", name),
+        name = ifelse(name == "IS_refbio", "refbio", name)
+      )
+  ),
+
+  ## Landings summaries for advice
+  tar_target(
+    landings_by_fishing_year_country,
+    dplyr::tbl(pax_db, "landings") |>
+      pax::pax_add_fishing_year() |>
+      dplyr::group_by(fishing_year, country) |>
+      dplyr::summarize(catch = sum(catch, na.rm = TRUE)) |>
+      dplyr::arrange(fishing_year),
+    format = pax::pax_tar_format_parquet()
+  ),
+  tar_target(
+    landings_by_gear, # Was advice/tables/landings.csv
+    dplyr::tbl(pax_db, "landings") |>
+      pax::pax_landings_by_gear(),
+    format = pax::pax_tar_format_parquet()
   )
 )

@@ -2,7 +2,7 @@
 editor_options:
   markdown:
     wrap: 150
-title: "ÝSA *Melanogrammus aeglefinus*"
+title: "HADDOCK *Melanogrammus aeglefinus*"
 format:
   html:
     theme: theme/advice.scss
@@ -23,9 +23,19 @@ execute:
 source("config.R")
 source("quarto_setup.R")
 targets::tar_load(c(
-  advice_table_landings,
-  assessment_results
+  data_landings,
+  data_prog_input,
+  data_prognosis,
+  data_tac,
+  data_assessment
 ))
+targets::tar_load(c(
+  advice_hist,
+  stock_dev,
+  tac_hist
+), store = "_assessment_model")
+tac <- tac_hist[tac_hist$assessment_year == assessment_year, "tac"]
+tac_last_year <- tac_hist[tac_hist$assessment_year == assessment_year - 1, "tac"]
 ```
 
 ```{r}
@@ -40,9 +50,9 @@ hr_advice_banner(
 )
 ```
 
-## Advice
+## Ráðgjöf
 
-Hafrannsóknastofnun og Alþjóðahafrannsóknaráðið leggja til, í samræmi við aflareglu íslenskra stjórnvalda, að afli fiskveiðiárið `r year_end`/`r year_end+1` verði ekki
+Hafrannsóknastofnun og Alþjóðahafrannsóknaráðið leggja til, í samræmi við aflareglu íslenskra stjórnvalda, að afli fiskveiðiárið `r assessment_year`/`r assessment_year+1` verði ekki
 meiri en `r hr_red_dot_number(tac)` tonn.
 
 ## Stofnþróun
@@ -52,11 +62,12 @@ aðgerðarmörkum (MSY B~trigger~), gátmörkum (B~pa~) og varúðarmörkum (B~l
 
 ```{r}
 #| echo: false
+library(patchwork)
 ggiraph::girafe(ggobj =
-  hr_advice_plot_landings(advice_table_landings, assessment_year = assessment_year) +
-  hr_advice_plot_recruitment(assessment_results, assessment_year = assessment_year) +
-  hr_advice_plot_fpl(assessment_results, assessment_year = assessment_year, ref_points = tg_ref_points) +
-  hr_advice_plot_ssb(assessment_results, assessment_year = assessment_year, ref_points = tg_ref_points),
+  hr_advice_plot_landings(data_landings, assessment_year = assessment_year) +
+  hr_advice_plot_recruitment(data_assessment, assessment_year = assessment_year) +
+  hr_advice_plot_fpl(data_assessment, assessment_year = assessment_year, ref_points = ref_points) +
+  hr_advice_plot_ssb(data_assessment, assessment_year = assessment_year, ref_points = ref_points),
   options = list(
     #ggiraph::opts_hover_inv(css = "opacity:0.7;"),
     #ggiraph::opts_hover(css = "stroke-width:2;"),
@@ -64,6 +75,105 @@ ggiraph::girafe(ggobj =
     ggiraph::opts_zoom(max = 5)
   ))
 ```
+
+::: {style="font-size: 11pt;line-height: normal;"}
+**Ýsa.** Afli eftir veiðarfærum, nýliðun, veiðihlutfall og veiðidánartala, stærð viðmiðunarstofns (B~45+ cm~) og hrygningarstofns. Skyggð svæði og öryggisbil sýna 95 % öryggismörk.
+:::
+
+## Stofnmat og Gátmörk
+```{r}
+hr_advice_basis_table(basis_table)
+```
+
+```{r}
+#| render: 'asis'
+hr_advice_ref_table(ref_points, ref_points_basis_table)
+```
+
+
+
+## Horfur
+
+Atvinnuvegaráðuneytið hefur sett aflareglu fyrir ýsu. Samkvæmt henni er aflamark ákvarðað á eftirfarandi hátt:
+
+<div class="small-math">
+
+$$
+\mathrm{TAC}_{y/y+1} = 0.35B_{45cm+, y} \; \mathrm{if}\; \mathrm{SSB}_{y} \geq \mathrm{MGT \; B_{trigger}}
+$$
+
+$$
+\mathrm{TAC}_{y/y+1} = \frac{\mathrm{SSB}_{y}}{\mathrm{MGT \; B_{trigger}}} 0.35B_{45cm+, y} \; \mathrm{if}\; \mathrm{SSB}_{y} < \mathrm{MGT \; B_{trigger}}
+$$
+</div>
+
+þar sem
+MGT B~trigger~ = `r hr_red_dot_number(64400)` tonn af hrygningarstofni,
+*y* er stofnmatsárið,
+TAC~y/y+1~ er aflamark fyrir fiskveiðárið sem byrjar 1. september á stofnmatsárinu
+og B~45cm+,y~ er stærð viðmiðunarstofns (lífmassi 45 cm og stærri ýsu)  í upphafi stofnmatsárs.
+
+::: {style="font-size: 11pt;line-height: normal;margin-bottom: -2%;"}
+**Ýsa.** Forsendur fyrir stofnmatsárið og í framreikningum.
+:::
+
+```{r}
+hr_advice_table_prog_input(data_prog_input, assessment_year)
+```
+
+::: {style="font-size: 11pt;line-height: normal;margin-bottom: -2%;"}
+**Ýsa.** Áætluð þróun stofnstærðar hrygningarstofns (tonn) miðað við veiðar samkvæmt aflareglu.
+:::
+```{r}
+hr_advice_table_prognosis(data_prognosis, assessment_year)
+```
+
+
+## Gæði stofnmats
+
+Stofnmatsaðferðin var endurskoðuð 2025. Á rýnifundinum var aldri nýliða breytt í 1 árs en var áður 2 ára.
+
+```{r}
+#| echo: false
+
+#
+ggiraph::girafe(ggobj = hr_advice_plot_retro(data_assessment, ref_points, assessment_year),
+                options = list(
+                  ggiraph::opts_hover_inv(css = "opacity:0.1;"),
+                  ggiraph::opts_hover(css = "stroke-width:2;"),
+                  #ggiraph::opts_sizing(width = .7),
+                  ggiraph::opts_zoom(max = 5)))
+```
+
+::: {style="font-size: 11pt;line-height: normal;"}
+**Ýsa.** Núverandi stofnmat (rauð lína) borið saman við stofnmat áranna `r assessment_year - 4`--`r assessment_year -1`. Aldri nýliða var breytt árið 2025.
+
+
+:::
+{{< pagebreak >}}
+
+## Aðrar upplýsingar
+
+Ýsuafli seinustu ára hefur verið yfir ráðlögðum heildarafla sem hefur valdið því að veiðihlutfallið hefur haldist yfir HR~pa~.
+
+
+## Ráðgjöf, aflamark og afli
+
+::: {style="font-size: 11pt;line-height: normal;margin-bottom: -2%;"}
+**Ýsa.** Tillögur um hámarksafla, ákvörðun stjórnvalda um aflamark og afli (tonn).
+:::
+
+```{r}
+hr_advice_table_tac(data_tac)
+```
+
+## Heimildir og ítarefni
+
+ICES. 2025. Workshop on the benchmark assessment and management plan evaluation for Icelandic haddock and saithe (WKICEGAD). ICES Scientific Reports.
+THIS NEEDS UPDATING WHEN REPORT IS READY1:10. 107 pp. http://doi.org/10.17895/ices.pub.5091
+
+
+Stofnmatsskýrslur Hafrannsóknastofnunar 2025. Ýsa. Hafrannsóknastofnun, 6. júní 2025.
 
 ```{r}
 #| echo: false

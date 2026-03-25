@@ -23,9 +23,19 @@ execute:
 source("config.R")
 source("quarto_setup.R")
 targets::tar_load(c(
-  advice_table_landings,
-  assessment_results
+  data_landings,
+  data_prog_input,
+  data_prognosis,
+  data_tac,
+  data_assessment
 ))
+targets::tar_load(c(
+  advice_hist,
+  stock_dev,
+  tac_hist
+), store = "_assessment_model")
+tac <- tac_hist[tac_hist$assessment_year == assessment_year, "tac"]
+tac_last_year <- tac_hist[tac_hist$assessment_year == assessment_year - 1, "tac"]
 ```
 
 ```{r}
@@ -42,7 +52,7 @@ hr_advice_banner(
 
 ## Advice
 
-MFRI and ICES advise that when the Icelandic management plan is applied, catches in the fishing year `r year_end`/`r year_end+1` should be no more than `r hr_red_dot_number(tac)` tonnes.
+MFRI and ICES advise that when the Icelandic management plan is applied, catches in the fishing year `r assessment_year`/`r assessment_year+1` should be no more than `r hr_red_dot_number(tac)` tonnes.
 
 ## Stock development
 
@@ -52,10 +62,10 @@ Fishing pressure is above HR~MSY~ and HR~pa~ and below HR~lim~; spawning stock s
 #| echo: false
 library(patchwork)
 ggiraph::girafe(ggobj =
-  hr_advice_plot_landings(advice_table_landings, assessment_year = assessment_year) +
-  hr_advice_plot_recruitment(assessment_results, assessment_year = assessment_year) +
-  hr_advice_plot_fpl(assessment_results, assessment_year = assessment_year, ref_points = ref_points) +
-  hr_advice_plot_ssb(assessment_results, assessment_year = assessment_year, ref_points = ref_points),
+  hr_advice_plot_landings(data_landings, assessment_year = assessment_year) +
+  hr_advice_plot_recruitment(data_assessment, assessment_year = assessment_year) +
+  hr_advice_plot_fpl(data_assessment, assessment_year = assessment_year, ref_points = ref_points) +
+  hr_advice_plot_ssb(data_assessment, assessment_year = assessment_year, ref_points = ref_points),
   options = list(
     #ggiraph::opts_hover_inv(css = "opacity:0.7;"),
     #ggiraph::opts_hover(css = "stroke-width:2;"),
@@ -77,6 +87,92 @@ hr_advice_basis_table(basis_table)
 #| render: 'asis'
 hr_advice_ref_table(ref_points, ref_points_basis_table)
 ```
+
+
+
+## Prospects
+
+The Icelandic Ministry of Industries has adopted a management plan for Icelandic haddock fisheries (MI, 2025). The TAC is set in the following way according to the plan: 
+
+<div class="small-math">
+
+$$
+\mathrm{TAC}_{y/y+1} = 0.35B_{45cm+, y} \; \mathrm{if}\; \mathrm{SSB}_{y} \geq \mathrm{MGT \; B_{trigger}}
+$$
+
+$$
+\mathrm{TAC}_{y/y+1} = \frac{\mathrm{SSB}_{y}}{\mathrm{MGT \; B_{trigger}}} 0.35B_{45cm+, y} \; \mathrm{if}\; \mathrm{SSB}_{y} < \mathrm{MGT \; B_{trigger}}
+$$
+</div>
+
+where
+MGT B~trigger~ = `r hr_red_dot_number(64400)` tonnes of SSB,
+*y* is the assessment year,
+TAC~y/y+1~ is the TAC for the fishing year starting 01 September in the assessment year,
+and B~45cm+,y~ is the estimated biomass of haddock ≥ 45 cm at the beginning of the assessment year
+
+::: {style="font-size: 11pt;line-height: normal;margin-bottom: -2%;"}
+**Haddock.** Assumptions made for the interim year and in the forecast.
+:::
+
+```{r}
+hr_advice_table_prog_input(data_prog_input, assessment_year)
+```
+
+::: {style="font-size: 11pt;line-height: normal;margin-bottom: -2%;"}
+**Haddock.** Projection of SSB (tonnes) based on adopted harvest control rule.
+:::
+```{r}
+hr_advice_table_prognosis(data_prognosis, assessment_year)
+```
+
+
+## Quality of the assessment
+
+The assessment method was revised in 2025. At the benchmark the model recruitment age was set to be age 1, while previously it was set as age 2. 
+
+```{r}
+#| echo: false
+
+#
+ggiraph::girafe(ggobj = hr_advice_plot_retro(data_assessment, ref_points, assessment_year),
+                options = list(
+                  ggiraph::opts_hover_inv(css = "opacity:0.1;"),
+                  ggiraph::opts_hover(css = "stroke-width:2;"),
+                  #ggiraph::opts_sizing(width = .7),
+                  ggiraph::opts_zoom(max = 5)))
+```
+
+::: {style="font-size: 11pt;line-height: normal;"}
+**Haddock** Current assessment (red line) compared with previous estimates (`r assessment_year - 4`--`r assessment_year - 1`). The recruitment age was changed in 2025.
+
+
+:::
+{{< pagebreak >}}
+
+## Other information
+
+Landings of haddock in Icelandic waters have consistently exceeded the advised catch in recent years, mainly related to quota transfers between species. This results in a harvest rate higher than HR~pa~  but within the realised harvest rates in the evaluation of the management plan. 
+
+## Advice, tac and catch
+
+::: {style="font-size: 11pt;line-height: normal;margin-bottom: -2%;"}
+**Haddock.** Recommended TAC, national TAC, and catches (tonnes).
+:::
+
+```{r}
+hr_advice_table_tac(data_tac)
+```
+
+## References and further reading
+
+ICES. 2025. Workshop on the benchmark assessment and management plan evaluation for Icelandic haddock and saithe (WKICEGAD). ICES Scientific Reports.
+THIS NEEDS UPDATING WHEN REPORT IS READY1:10. 107 pp. http://doi.org/10.17895/ices.pub.5091
+
+MFRI Assessment Reports 2025. Haddock. Marine and Freshwater Research Institute, 6. June 2025.
+
+Stofnmatsskýrslur Hafrannsóknastofnunar 2025. Ýsa. Hafrannsóknastofnun, 6. júní 2025.
+
 ```{r}
 #| echo: false
 #| output: asis

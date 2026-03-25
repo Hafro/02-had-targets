@@ -5,9 +5,6 @@ assessment_year <- year_end - 1
 age_end <- 14
 
 publication_date <- "2024-06-07"
-tac <- 76774
-# TODO: This is TAC in scripts_assessment_model()
-tac_last_year <- 76415
 
 ices_stock_key_label <- "had.27.5a"
 ices_median_refbio <- "B45cm+"
@@ -114,5 +111,56 @@ ref_points_basis_table <- dplyr::bind_rows(
     ref_point = 'HR_pa',
     basis.is = 'Veiðihlutfall sem leiðir til P(SSB > B~lim~) = 95 % með B~trigger~',
     basis.en = 'HR leading to P(SSB > B~lim~) = 95 % with B~trigger~'
+  )
+)
+
+prog_input_notes_table <- dplyr::bind_rows(
+  list(
+    name = "ssb",
+    year = as.integer(assessment_year + 1),
+    notes.is = 'Mat úr líkani; í tonnum',
+    notes.en = 'From the assessment; in tonnes'
+  ),
+  list(
+    name = "rec",
+    year = as.integer(assessment_year + 1),
+    notes.is = "Faldmeðaltal nýliðunar byggt á allri tímaröðinni; í þúsundum",
+    notes.en = "Geometric mean recruitment based on the whole time series; in thousands"
+  ),
+  list(
+    name = "rec",
+    year = as.integer(assessment_year + 2),
+    notes.is = "Faldmeðaltal nýliðunar byggt á allri tímaröðinni; í þúsundum",
+    notes.en = "Geometric mean recruitment based on the whole time series; in thousands"
+  ),
+  list(
+    name = "catch",
+    year = as.integer(assessment_year),
+    notes.is = sprintf(
+      "Gerir ráð fyrir fullri nýtingu aflaheimilda fram til 31. ágúst %1$s og aflareglu frá 1. september til 31. desember %1$s; í tonnum",
+      assessment_year
+    ),
+    notes.en = sprintf(
+      "Based on full uptake of the remaining TAC until 31 August %1$s and management plans from 1 September to 31 December %1$s; tonnes",
+      assessment_year
+    )
+  ),
+  list(
+    name = "HR",
+    year = as.integer(assessment_year),
+    notes.is = sprintf(
+      'Veiðihlutfall á almanaksári, byggt á áætluðum afla árið %s.',
+      assessment_year
+    ),
+    notes.en = sprintf(
+      'Annual HR, based on assumed catch in %s.',
+      assessment_year
+    )
+  ),
+  list(
+    name = "refbio",
+    year = as.integer(assessment_year),
+    notes.is = "Lífmassi ýsu 45 cm og stærri (B~45+~). Mat úr líkani; í tonnum",
+    notes.en = "Biomass of fish 45 cm and larger (B~45+~). From the assessment; in tonnes"
   )
 )
