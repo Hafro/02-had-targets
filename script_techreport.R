@@ -47,17 +47,11 @@ list(
   tar_quarto(
     techreport_en,
     path = "techreport_en.qmd",
-    execute_params = list(
-      year_end = year_end
-    ),
     quiet = FALSE
   ),
   tar_quarto(
     techreport_is,
     path = "techreport_is.qmd",
-    execute_params = list(
-      year_end = year_end
-    ),
     quiet = FALSE
   )
 )

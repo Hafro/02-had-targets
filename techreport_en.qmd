@@ -5,7 +5,6 @@ description: " <br> Assessment report"
 author: "Marine and Freshwater Research Institute, Iceland"
 date: "7. June 2024"
 date-format: D MMMM YYYY
-#title: "\n\n10\tHaddock in 5a"
 format:
   html:
     theme: theme/techreport.scss
@@ -25,8 +24,6 @@ execute:
   warning: false
   message: false
 bibliography: library.bib
-params:
-  year_end: NULL
 ---
 
 ```{r setup, include=FALSE}
@@ -38,7 +35,6 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE,
 options(knitr.kable.NA = '')
 
 i <- 0
-tyr <- params$year_end
 ggplot2::theme_set(ggplot2::theme_bw())
 
 pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C",
@@ -48,6 +44,7 @@ pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C",
 ```
 
 ```{r message=FALSE, warning=FALSE}
+source("config.R")
 source("quarto_setup.R")
 targets::tar_load(c(
   fig_catchdistplot_selectyrs,
