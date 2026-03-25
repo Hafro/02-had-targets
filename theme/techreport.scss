@@ -1,0 +1,271 @@
+/*-- scss:defaults --*/
+
+$theme: "cosmo" !default;
+
+//
+// Color system
+//
+
+$hafroblar: #0076a9;
+$hafrograr: #5c6670;
+$hafroljos: #88c6fc;
+
+$hafrograenn: #3f6658;
+$hafroljosgraenn: #D3E7E0;
+
+
+
+$white:    #fff !default;
+$gray-100: #f8f9fa !default;
+$gray-200: #e9ecef !default;
+$gray-300: #dee2e6 !default;
+$gray-400: #ced4da !default;
+$gray-500: #adb5bd !default;
+$gray-600: #868e96 !default;
+$gray-700: #495057 !default;
+$gray-800: #373a3c !default;
+$gray-900: #212529 !default;
+$black:    #000 !default;
+
+$blue:    #2780e3 !default;
+$indigo:  #6610f2 !default;
+$purple:  #613d7c !default;
+$pink:    #e83e8c !default;
+$red:     #ff0039 !default;
+$orange:  #f0ad4e !default;
+$yellow:  #ff7518 !default;
+$green:   #3fb618 !default;
+$teal:    #20c997 !default;
+$cyan:    #9954bb !default;
+
+$primary:       $blue !default;
+$secondary:     $gray-800 !default;
+$success:       $green !default;
+$info:          $cyan !default;
+$warning:       $yellow !default;
+$danger:        $red !default;
+$light:         $gray-100 !default;
+$dark:          $gray-800 !default;
+
+$min-contrast-ratio:   2.6 !default;
+
+// Options
+
+$enable-rounded: false !default;
+
+// Body
+
+$body-color:    $gray-800 !default;
+
+// Fonts
+
+// stylelint-disable-next-line value-keyword-case
+$font-family-sans-serif:    "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
+$headings-font-weight:      400 !default;
+
+// Navbar
+
+$navbar-dark-hover-color:       rgba($white, 1) !default;
+$navbar-light-hover-color:      rgba($black, .9) !default;
+
+// Alerts
+
+$alert-border-width:            0 !default;
+
+// Progress bars
+
+$progress-height:               .5rem !default;
+
+
+
+/*-- scss:rules --*/
+
+
+// Variables
+
+$web-font-path: "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap" !default;
+@if $web-font-path {
+  @import url($web-font-path);
+}
+
+
+          #title-block-header.quarto-title-block.default .quarto-title-meta {
+            color: #3f6658;
+          }
+          .subtitle {
+            font-size: 30px;
+          }
+          .description{
+            font-size: 25px;
+          }
+          .quarto-title-block .quarto-title-banner {
+            height: 0;
+            margin-block-end: 1rem;
+            position: relative;
+            margin-top: -20px;
+          }
+          #title-block-header {
+            background-size: cover;
+            background-position-y: center;
+            height: 275px;
+            margin-bottom: -30px;
+          }
+
+    
+
+// Typography
+h1 {
+  color: $hafrograenn;
+  font-size: 2.3em;
+  font-weight: normal;
+    font-family: calibri, Sans-Serif;
+}
+
+
+body {
+  -webkit-font-smoothing: antialiased;
+  line-height: 110%;
+  font-family: calibri, Sans-Serif;
+  margin-bottom: 0px;
+}
+
+// Indicators
+
+.badge {
+  &.bg-light {
+    color: $dark;
+  }
+}
+
+h2 {
+  color: $white;
+  font-size: 1.1em;
+  background-color: $hafrograenn;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-transform: uppercase;
+  font-weight: normal;
+  font-family: calibri, Sans-Serif;
+}
+
+h3 {
+  font-size: 1.3em;
+  background-color: $hafroljosgraenn;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+
+h4, h5, h6 {
+  color: $hafrograenn; 
+  border-top: 1.5px solid;
+  font-size: 1.3em;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+
+table, th, td {
+  border: 1.5px solid;
+  --font-size: 0.9em;
+  line-height: 110%;
+  border-collapse: collapse;
+  border-spacing: 3px;
+  font-weight: normal;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+tr {
+    border-bottom: 1.5px solid;
+    border-top: 1.5px solid;
+    font-weight: normal;
+    
+}
+
+tr.header 
+{
+  background-color: $hafroljos;
+  font-weight: normal;
+}
+
+
+    
+td:nth-child(1) { background-color: $gray-200; }
+
+figcaption
+{
+  font-size: 0.9em;
+  line-height: 110%;
+  font-family: calibri, Sans-Serif;
+  margin-bottom: 0px;
+}
+
+// Progress bars
+
+.progress {
+  @include box-shadow(none);
+
+  .progress-bar {
+    font-size: 8px;
+    line-height: 8px;
+  }
+}
+
+@media screen {
+  div.divFooter {
+    display: none;
+  }
+}
+@media print {
+  div.divFooter {
+    position: fixed;
+    bottom: 0;
+  }
+}
+
+
+
+@media print {
+    @page {
+      size: A4; /* DIN A4 standard, Europe */
+      margin: 0;
+    }
+
+body{
+  margin-top: 0mm; 
+  margin-bottom: 0mm; 
+  margin-left: 0mm; 
+  margin-right: 0mm;
+  font-size: 0.7em;
+}
+h2 {
+  font-size: 1.2em;
+  font-weight: normal;
+}
+
+table, th, td {
+  border: 0.2px solid;
+  font-size: 0.9em;
+  line-height: 90%;
+  --border-collapse: collapse;
+  page-break-inside:auto;
+   padding: 1px;
+}
+
+tr {
+            border-bottom: 0.2px solid;
+            border-top: 0.2px solid;
+            page-break-inside:avoid; 
+            page-break-after:auto
+}
+
+
+}
