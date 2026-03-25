@@ -28,7 +28,7 @@ list(
 
   tar_target(
     table_nb_lnd_by_yr,
-    hr_nb_lnd_by_yr(pax_db),
+    hr_nb_lnd_by_yr(pax_db, year_end),
     format = pax_tar_format_parquet()
   ),
 
