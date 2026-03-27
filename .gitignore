@@ -1,12 +1,11 @@
-/_targets/
-/_advice/
-/_assessment_model/
-/_techreport/
+/_*/
 /*.duckdb
 /marmap*
 
 /figs/
 /advice*.html
 /techreport*.html
+/*.rmarkdown
+/*_files/
 
 /exploratory_models/*/_targets/
