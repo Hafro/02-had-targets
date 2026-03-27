@@ -95,6 +95,7 @@ hr_techreport_plot_numboats(
 #| fig-cap: 'Haddock in 5a. Landings in tons and percent of total by gear and year'
 hr_techreport_plot_landings_gear(
   pcon,
+  year_end = assessment_year - 1,
   # TODO: Missing other
   mfdb_gear_codes = c('LLN', 'DSE', 'BMT')
 )
@@ -117,6 +118,7 @@ hr_techreport_table_boatsummary(
 hr_techreport_plot_catchdepth(
   pcon,
   year_start = 2000,
+  # TODO: No unknown data
   year_end = assessment_year - 1
 )
 ```
@@ -176,6 +178,7 @@ Sampling from commercial catches is generally comprehensive, covering the main g
 #| fig-cap: 'Haddock in 5a. Ratio of samples by month (bars) compared with proportion landings by month (solid black line) split by year and main gear types. Numbers of above the bars indicate number of samples by year, month and gear.'
 #| fig-height: 6
 
+# TODO: All over the shop
 hr_techreport_plot_sampling_overview(
   pcon,
   mfdb_gear_codes = c('LLN', 'DSE', 'BMT'),
@@ -223,6 +226,7 @@ Most length measurements are derived from the three main fleet segments: trawl, 
 #| fig-cap: 'Haddock in 5a. Commercial length distributions by gear and year'
 #| fig-height: 10
 
+# TODO: Gone wrong
 hr_techreport_plot_comm_joy_ldist(
   pcon,
   length_min = 100,
@@ -255,7 +259,7 @@ An overview of the sampled otoliths is provided in @tbl-otosamples. The catch in
 
 hr_techreport_table_lengthsamples(
   pcon,
-  year_start = 2000,
+  year_start = 1930,
   year_end = assessment_year - 1,
   include_cols = c("otol")
 )
@@ -269,7 +273,7 @@ hr_techreport_table_lengthsamples(
 hr_techreport_plot_catch_age_bubble(
   input_data,
   age_start = 1,
-  age_end = 18,
+  age_end = 17,
   year_start = 1970,
   year_end = assessment_year - 1
 )
@@ -283,7 +287,7 @@ hr_techreport_plot_catch_age_bubble(
 hr_techreport_plot_catch_age_prop(
   input_data,
   age_start = 1,
-  age_end = 18,
+  age_end = 17,
   year_start = 1970,
   year_end = assessment_year - 1
 )
@@ -644,7 +648,6 @@ All available indicators from commercial catch data and scientific surveys sugge
 
 In `r assessment_year`, the stock is estimated to have increased substantially. However, it is projected to begin declining in the coming years as the above-average year classes that have supported the recent increase move through and out of the fishable biomass. The analytical retrospective analysis revealed a slight negative bias in the estimated spawning stock biomass (SSB). This bias is expected to diminish in future assessments, as the low survey indices from 2020 and 2021 are removed from the retrospective peel and the stock begins its anticipated decline.
 
-## References
 ```{r}
 #| echo: false
 #| output: asis

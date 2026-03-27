@@ -96,6 +96,7 @@ hr_techreport_plot_numboats(
 #| fig-cap: 'Ýsa. Landaður afli eftir veiðarfærum samkvæmt aflaskráningarkerfi Fiskistofu.'
 hr_techreport_plot_landings_gear(
   pcon,
+  year_end = assessment_year - 1,
   # TODO: Missing other
   mfdb_gear_codes = c('LLN', 'DSE', 'BMT')
 )
@@ -253,7 +254,7 @@ Fjöldi sýna og aldurslesinna fiska úr afla er gefinn í @tbl-otosamples. Afli
 
 hr_techreport_table_lengthsamples(
   pcon,
-  year_start = 2000,
+  year_start = 1930,
   year_end = assessment_year - 1,
   include_cols = c("otol")
 )
@@ -268,7 +269,7 @@ hr_techreport_table_lengthsamples(
 hr_techreport_plot_catch_age_bubble(
   input_data,
   age_start = 1,
-  age_end = 18,
+  age_end = 17,
   year_start = 1970,
   year_end = assessment_year - 1
 )
@@ -282,7 +283,7 @@ hr_techreport_plot_catch_age_bubble(
 hr_techreport_plot_catch_age_prop(
   input_data,
   age_start = 1,
-  age_end = 18,
+  age_end = 17,
   year_start = 1970,
   year_end = assessment_year - 1
 )
@@ -359,6 +360,7 @@ patchwork::wrap_plots(
 #| fig-cap: 'Ýsa. Breytingar á dreifingu lífmassa vísitölu ýsu í SMB og SMH.'
 #| fig-height: 6
 
+# TODO: Gap in 2010? skip_years not right?
 hr_techreport_plot_survey_byarea(
   pcon
 )
@@ -638,7 +640,6 @@ hr_techreport_plot_quotatransfer(pcon, assessment_year)
 
 ## Heimildaskrá
 
-## References
 ```{r}
 #| echo: false
 #| output: asis
