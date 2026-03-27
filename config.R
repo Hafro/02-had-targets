@@ -1,5 +1,5 @@
 species <- 2
-year_start <- 1979
+year_start <- 1979 # TODO: This is throwing off fig-landingsplot, which needs data since 1905, but setting to 1900 causes model to not converge
 year_end <- lubridate::year(Sys.Date())
 assessment_year <- year_end - 1
 age_end <- 14
