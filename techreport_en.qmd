@@ -44,33 +44,607 @@ pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C",
 ```
 
 ```{r message=FALSE, warning=FALSE}
+library(ggplot2)
 source("config.R")
 source("quarto_setup.R")
 targets::tar_load(c(
-  fig_catchdistplot_selectyrs,
+  input_data,
+  sam_fit,
+  projections_at_age_hist,
+  advice_hist,
+  tac_hist,
+  landings_by_fishing_year_country,
   pax_db
-))
+), store = "_assessment_model")
+pcon <- pax_db
 ```
 
-## General information
+## Key signals
 
-Icelandic haddock (*Melanogrammus aeglefinus*) is fairly abundant in the coastal waters around Iceland and is mostly limited to the Icelandic continental shelf, while 0-group and juveniles from the stock are occasionally found in East Greenland waters (ICES area 14). Apart from this, larval drifts links with other regions have not been found. In addition, minimal catches have been reported in area 14 (maximum of less than 10 tons in 2016). The nearest area to Iceland where haddock is found in reasonable abundance are in shallow Faroese waters, which constitutes as a separate stock. The two regions are separated by a wide and relatively deep ridge, an area where reporting of haddock catches is nonexistent, both commercially and scientifically. Tagging studies [@jonsson1996tagging] conducted between 1953 and 1965 showed no migrations of juvenile and mature fish outside of Icelandic waters, as most recaptures took place in the area of tagging (or adjacent areas) and on the spawning grounds south of Iceland. Information about stock structure (metapopulation) of haddock in Icelandic waters is limited.
+- Survey biomass steadily increased from 2011, peaking sharply in 2023–2025 at levels similar to the peak observed in 2003–2006.
 
-The species is found all around the Icelandic coast, principally in the relatively warm waters off the west and south coast, in shallow waters (10-200 m depth). Spawning has historically been limited to the southern waters. Haddock is also found off the north coast and in warm periods a large part of the immature fish have been found north of Iceland. In recent years a larger part of the fishable stock has been found off the north coast of Iceland than in the last two decades of the 20th century.
+- High recruitment from 2020–2022 is the primary driver behind the current biomass peak. However, recruitment in 2023 and 2024 has fallen below the decade's average, while early indicators for 2025 suggest recruitment near this average. Consequently, it is likely that haddock biomass will decline in the near future.
+
+- Length distributions have remained stable over the past decade, reflecting consistent periodic recruitment and a broad range of sizes currently present in the stock.
+
+- Current biomass estimates from the stock assessment are the highest recorded since 1979, though these estimates carry considerable uncertainty.
+
+- Harvest rates have generally fluctuated around the target harvest rate set over the last decade, with no major deviations.
+
+
+## Stock description and management units
+
+Haddock (*Melanogrammus aeglefinus*) is abundant in the coastal waters around Iceland and is mostly limited to the Icelandic continental shelf. Haddock is predominantly distributed around Iceland’s western and southern coasts, typically in depths between 10 and 200 meters. Historically, spawning activity has been restricted to southern waters. Recently, an increasing proportion of the fishable stock has been observed off the northern coast compared to previous decades.
 
 ## Fishery
+The haddock fishery in ICES area 5a has seen minimal structural changes recently, although the number of vessels responsible for 95% of the catch has steadily decreased (@fig-numvesselplot and @tbl-numboatstab). Approximately 250 longliners, 60 trawlers, and 40 demersal seine boats report catches annually. Historically, trawlers have dominated the catches, currently accounting for around 60%, while catches from longliners have increased significantly since the mid-1990s (@fig-landingsbygear). Demersal seine catches have remained stable at about 15%, and contributions from other vessel types are minimal(@fig-landingsbygear). Main fishing grounds are in the southern, southwestern, and western regions, with recent years showing increased catches from northern and northeastern waters (@fig-catchbyarea and @fig-catchdistplot).
 
-The fishery for haddock in 5a has not changed substantially in recent years, but the total number of boats that account for 95% of the fishery has been declining steadily (@fig-numvesselplot and table 1). Around 250 longliners annually report catches of haddock, around 60 trawlers and 40 demersal seine boats. Most of Haddock in 5a is caught by trawlers and the proportion caught by that gear has decreased since 1995 from around 70% to 45% in 2017. However, for the last two years this proportion has increased slightly and is now around 60%. At the same time the proportion caught by longlines has increased from around 15% in 1995 - 2000 to 40 % in 2011--`r tyr-1`. Catches in demersal seine have varied less and have been at around 15% of Icelandic catches of Haddock in 5a. Currently less than 2% of catches are taken by other vessel types, but historically up to 10 % of total catches were by gillnetters, but since 2000 these catches have been low (@fig-landingsbygear). Most of the haddock caught in 5a by Icelandic vessels is caught at depths less than 200 m (@fig-depthplot). The main fishing grounds for Haddock in 5a, as observed from logbooks, are in the south, southwestern and western part of the Icelandic shelf (@fig-catchbyarea and @fig-catchdistplot). The main trend in the spatial distribution of haddock catches in 5a according to logbook entries is the increased proportion of catches caught in the north and northeast.
+```{r}
+#| label: fig-numvesselplot
+#| fig-cap: 'Haddock in 5a.  Number of vessels (all gear types) accounting for 95% of the total catch annually since 1994. Left: Plotted against year. Right: Plotted against total catch. Data from the Directorate of Fisheries.'
+
+hr_techreport_plot_numboats(
+  pcon,
+  year_start = 1992,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-landingsbygear
+#| fig-cap: 'Haddock in 5a. Landings in tons and percent of total by gear and year'
+hr_techreport_plot_landings_gear(
+  pcon,
+  # TODO: Missing other
+  mfdb_gear_codes = c('LLN', 'DSE', 'BMT')
+)
+```
+
+```{r}
+#| label: tbl-numboatstab
+#| tbl-cap: "Haddock in 5a. Number of Icelandic vessels landing haddock, and all landed catch divided by gear type."
+hr_techreport_table_boatsummary(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-depthplot
+#| fig-cap: 'Haddock in 5a. Depth distribution of haddock catches from bottom trawls, longlines, trawls and demersal seine from Icelandic logbooks'
+
+hr_techreport_plot_catchdepth(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-catchbyarea
+#| fig-cap: 'Haddock in 5a. Changes in spatial distribution of haddock catches as recorded in Icelandic logbooks.'
+
+hr_techreport_plot_catch_region(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1
+)
+```
 
 ```{r}
 #| label: fig-catchdistplot
 #| fig-cap: 'Haddock in 5a. Spatial distribution of catches by all gears for selected years.'
-hr_techreport_fig_catchdistplot(
-  pax_db,
-  years = fig_catchdistplot_selectyrs
+hr_techreport_plot_catchspatial(
+  pcon,
+  years = c(2001, 2005, 2010, 2015, assessment_year)
 )
 ```
 
+### Landing trends
+
+```{r}
+curr.lnd <-
+  dplyr::tbl(pcon, "landings") |>
+  pax::pax_landings_by_gear() |>
+  dplyr::filter(year == assessment_year - 1) |>
+  dplyr::group_by(country) |>
+  dplyr::summarize(catch = sum(catch, na.rm = TRUE) / 1e3) |>
+  dplyr::pull(catch, name = country)
+```
+
+Landings of haddock in ICES area 5.a in `r assessment_year-1` totaled `r as.character(round(sum(curr.lnd)))` tonnes (@fig-landingsplot). This represents a significant decrease from the high levels of approximately 100,000 tonnes recorded between 2005 and 2008, returning to levels somewhat lower than observed between 1975 and the early 2000s. Foreign vessel landings have significantly declined following the expansion of the Icelandic Exclusive Economic Zone (EEZ), with Faroese vessels now accounting for the majority of foreign catches and which in `r assessment_year-1` was `r round(curr.lnd[['Faroe Islands']])` tonnes.
+
+```{r}
+#| label: fig-landingsplot
+#| fig-cap: 'Haddock in 5a. Recorded landings since 1905.'
+# TODO: This needs more data to accurately report anything
+hr_techreport_plot_landings_country(
+  pcon,
+  year_end = assessment_year - 1
+)
+```
+
+\newpage
+
+## Data available
+
+Sampling from commercial catches is generally comprehensive, covering the main gears (demersal seines, longlines, and trawls) and adequately representing the spatial and seasonal distribution of catches (@fig-samplingbymonthplot and @fig-samplingposplot).
+
+```{r}
+#| label: fig-samplingbymonthplot
+#| fig-cap: 'Haddock in 5a. Ratio of samples by month (bars) compared with proportion landings by month (solid black line) split by year and main gear types. Numbers of above the bars indicate number of samples by year, month and gear.'
+#| fig-height: 6
+
+hr_techreport_plot_sampling_overview(
+  pcon,
+  mfdb_gear_codes = c('LLN', 'DSE', 'BMT'),
+  year_start = assessment_year - 4,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-samplingposplot
+#| fig-cap: 'Haddock in 5a. Fishing grounds last year as reported in logbooks (contours) and positions of samples taken from landings (crosses) by main gear types.'
+#| fig-height: 6
+
+hr_techreport_plot_sampling_position(
+  pcon,
+  mfdb_gear_codes = c('LLN', 'DSE', 'BMT'),
+  year_start = assessment_year - 1,
+  year_end = assessment_year - 1
+) + ggplot2::theme(legend.position = c(0.75,0.25))
+```
+
+### Landings and discards
+
+Historical landings data come from various databases. 
+
+Historical landings data are sourced from various databases such as ICES STATLAN database, Directorate of Fisheries and the Icelandic Coast Guard. 
+
+Icelandic law prohibits discarding, and discard rates since 2001 have been low, generally below 3% of the total annual landings, both in weight and numbers (@fig-discards,  also see @MFRIdiscards2016 for further details). Fisheries management regulations effectively discourage discarding through quota flexibility and quota conversion measures. In addition to prevent high grading and quota mismatch the fisheries are allowed to land fish that will not be accounted for in the allotted quota, provided that the proceedings when the landed catch is sold will go to the Fisheries Project Fund (*Verkefnasjóður sjávarútvegsins*).
+
+```{r}
+#| label: fig-discards
+#| fig-cap: 'Haddock in 5a. Estimates of annual discards by gear (point estimate and 95% confidence interval). No estimates are available since 2018.'
+
+hr_techreport_plot_discards(species)
+```
+
+### Length compositions
+
+Commercial catches primarily consist of haddock ranging from 40 to 70 cm, a range that has remained stable in recent years (@fig-commldistplot).  Gillnet fisheries tend to target slightly larger individuals, and the modes of the length distributions vary more markedly depending on the presence of larger haddock.
+
+Most length measurements are derived from the three main fleet segments: trawl, longline, and demersal seine fisheries (@tbl-lengthsamples). The number of length samples collected by gear type has fluctuated in recent years, reflecting shifts in fleet composition.
+
+```{r}
+#| label: fig-commldistplot
+#| fig-cap: 'Haddock in 5a. Commercial length distributions by gear and year'
+#| fig-height: 10
+
+hr_techreport_plot_comm_joy_ldist(
+  pcon,
+  length_min = 100,
+  sampling_types = c(1,2,8),
+  mfdb_gear_codes = c('BMT','DSE','LLN','GIL'),
+  year_start = 1981,
+  year_end = assessment_year - 1
+) + ggplot2::xlim(c(25, 85))
+```
+
+```{r}
+#| label: tbl-lengthsamples
+#| tbl-cap: "Haddock in 5a. Number of samples and length measurements from landed catch."
+
+hr_techreport_table_lengthsamples(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1,
+  include_cols = c("lengths")
+)
+```
+
+### Age compositions
+
+An overview of the sampled otoliths is provided in @tbl-otosamples. The catch in numbers-at-age is illustrated in @fig-catagebubble. In `r assessment_year -1`, the catch was primarily composed of the 2014 to 2017 year classes. In recent years, the number of year classes contributing to the catch has increased, reflecting a period of low fishing mortality. Notably, the oldest year class contributing more than 1% to the total catch was 11 years old (@fig-catchageprop).
+
+```{r}
+#| label: tbl-otosamples
+#| tbl-cap: "Haddock in 5a. Number of samples and otoliths collected from landed catch."
+
+hr_techreport_table_lengthsamples(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1,
+  include_cols = c("otol")
+)
+```
+
+```{r}
+#| label: fig-catagebubble
+#| fig-cap: 'Haddock in 5a. Catch at age from the commercial fishery in Iceland waters. Bar size is indicative of the catch in numbers and bars are colored by cohort. Note different scales on y-axis'
+#| fig-height: 8
+
+hr_techreport_plot_catch_age_bubble(
+  input_data,
+  age_start = 1,
+  age_end = 18,
+  year_start = 1970,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-catchageprop
+#| fig-cap: 'Haddock in 5a. Catch at age from the commercial fishery in Iceland waters. Biomass caught by year and age, bars are colored by cohort.'
+#| fig-height: 8
+
+hr_techreport_plot_catch_age_prop(
+  input_data,
+  age_start = 1,
+  age_end = 18,
+  year_start = 1970,
+  year_end = assessment_year - 1
+)
+```
+
+### Weight at age in the catch
+
+Mean weight-at-age in the catch is shown in @fig-catwtplot. The weights of older year classes have increased in recent years, following a period of low values when the stock was large between 2005 and 2009. The increase in mean weight is particularly evident for younger haddock from the small 2008–2013 cohorts, contributing to an above-average mean weight among older fish. Although the mean weight of younger year classes in the catch has declined somewhat, it remains above the long-term average.
+
+```{r}
+#| label: fig-catwtplot
+#| fig-cap: 'Haddock in 5a. Mean weight at age in the catch from the commercial fishery in Icelandic waters. Bars are coloured by cohort.'
+#| fig-height: 6
+
+hr_techreport_plot_catch_wgt_growth(
+  input_data,
+  age_start = 2,
+  age_end = 12,
+  year_start = 1985,
+  year_end = assessment_year - 1
+)
+```
+
+### Natural mortality
+
+No information is available on natural mortality. For assessment and advisory purpose, natural mortality is assumed to be 0.2 for all age groups.
+
+## Catch, effort and research vessel data
+
+### Catch per unit of effort from commercial fisheries
+
+Catch-per-unit-effort (CPUE) from hauls where haddock comprise more than 50% of the catch show a steady increase in CPUE since 1990 across the main gear types (@fig-cpueplot). CPUE levels from bottom trawls and demersal seine are among the highest recorded in the time series, whereas those from longlines remain relatively low. This trend aligns with fishers’ perception that haddock are easy to catch. However, this pattern differs from that observed in surveys and stock assessments, which show less of an increase after 2000 and a more pronounced decline in recent years.
+
+It is important to note that these differences may partly reflect changes in the size composition of the stock. The biomass of haddock ≥60 cm is currently at the highest observed level in the time series, while total biomass is near its long-term average. This suggests that CPUE trends may be more reflective of the abundance of larger individuals rather than overall stock size.
+
+Regional differences in CPUE are also evident. In the area north of Iceland, CPUE has shown a continuous increase, whereas in southern regions it more closely mirrors the biomass trends observed in the spring survey. Bycatch is minimal, as haddock are typically targeted in species-specific catch compositions.
+
+CPUE could not be estimated for 2022 due to the unavailability of effort data at the time of assessment.
+
+```{r}
+#| label: fig-cpueplot
+#| fig-cap: 'Haddock in 5a. Catch per unit of effort in the most important gear types. The dashed lines are based on locations where more than 50% of the catch is haddock and solid lines on all records where haddock is caught. A change occurred in the longline fleet starting September 1999. Earlier only vessels larger than 10 BRT were required to return logbooks but later all vessels were required to return logbooks. Effort data is not available for 2022.'
+
+hr_techreport_plot_cpue(
+  pcon,
+  year_start = 1980,
+  year_end = assessment_year - 1
+)
+```
+
+### Icelandic survey data
+
+Information on haddock abundance and biological parameters in Division 5.a is available from two surveys: the Icelandic spring groundfish survey and the Icelandic autumn groundfish survey. The spring survey has been conducted annually since 1985 and covers the core distribution area of the haddock fishery. The autumn survey, initiated in 1996 and expanded in 2000 to include deeper water stations, provides supplementary insight into stock development. Both surveys were originally designed to monitor the Icelandic cod stock but have proven effective in tracking the haddock stock, including juvenile abundance and fishable biomass. A full autumn survey could not be carried out in 2011. Detailed survey methodologies are described in the Stock Annex.
+
+@fig-fourplot presents a recruitment index (abundance <25 cm) alongside biomass indices for total biomass, biomass >45 cm, and biomass >60 cm. Spatial shifts in biomass distribution observed in the spring survey are shown in @fig-surveybyarea, indicating an increasing proportion of biomass in the northern regions (NW and NE). Length distributions from the surveys are displayed in @fig-surveyldistplot, and spatial distribution of survey stations is shown in @fig-surveylocationplot.
+
+Both surveys show a substantial increase in total biomass between 2002 and 2005, followed by a marked decline from 2007 to 2010. While overall trends are similar, the autumn survey tends to show less contrast between periods of high and low biomass. A notable discrepancy occurred in 2015, when the autumn survey estimated substantially lower biomass than surrounding years. Differences between the surveys are more pronounced in the >60 cm biomass index, which has reached its highest recorded level in recent years according to both surveys. A sharp increase in total survey biomass was observed in autumn 2022 and spring 2023.
+
+Age-disaggregated indices from the spring survey are shown in @fig-surveyage. Consistent with the increase in >60 cm biomass, the index for age 11+ is now higher than previously recorded. This is likely due to reduced fishing mortality following the implementation of the management plan for haddock in 5.a. Despite a recent period of low recruitment, the biomass for other age groups is currently near the geometric mean in both surveys.
+
+```{r}
+#| label: fig-fourplot
+#| fig-cap: 'Haddock in 5a. Indices (total biomass, biomass> 45 cm, biomass> 60 cm and abundance <25 cm) in the Spring Survey (March) 1985 and onwards (line shaded area) and the autumn survey (point ranges).'
+#| fig-height: 6
+
+patchwork::wrap_plots(
+  hr_techreport_plot_lbindex(pcon, length_range = c(1,500), var = "si_biomass") + ggplot2::labs(x='',y='Total biomass'),
+  hr_techreport_plot_lbindex(pcon, length_range = c(45,500), var = "si_biomass") + ggplot2::labs(x='',y='Biomass > 45'),
+  hr_techreport_plot_lbindex(pcon, length_range = c(60,500), var = "si_biomass") + ggplot2::labs(x='',y='Biomass > 60'),
+  hr_techreport_plot_lbindex(pcon, length_range = c(1,25), var = "si_abund") + ggplot2::labs(x='',y='Abundance < 25'),
+  ncol=2
+)
+```
+
+```{r}
+#| label: fig-surveybyarea
+#| fig-cap: 'Haddock in 5a. Changes in geographical distribution of the survey biomass.'
+#| fig-height: 6
+
+hr_techreport_plot_survey_byarea(
+  pcon
+)
+```
+
+```{r}
+#| label: fig-surveyldistplot
+#| fig-cap: 'Haddock in 5a. Length disaggregated abundance indices from the March survey 1985 and onwards.'
+#| fig-height: 8
+
+hr_techreport_plot_survey_ldist_joy(
+  pcon,
+  year_start = 1985,
+  year_end = assessment_year
+)
+```
+
+```{r}
+#| label: fig-surveylocationplot
+#| fig-cap: 'Haddock in 5a. Location of haddock in the most recent March (SMB) and the Autumn (SMH) surveys, bubble sizes are relative to catch sizes, and crosses indicate stations where no haddock was observed.'
+
+hr_techreport_plot_survey_location(
+  pcon,
+  assessment_year = assessment_year
+)
+```
+
+```{r}
+#| label: fig-agfsldistplot
+#| fig-cap: 'Haddock in 5a. Length disaggregated abundance indices from the October survey 1996 onwards (execept for 2011).'
+#| eval: true
+
+hr_techreport_plot_survey_ldist(
+  pcon,
+  35
+)
+```
+
+```{r}
+#| label: fig-surveyage
+#| fig-cap: 'Haddock in 5a. Age disaggregated indices in the Spring Survey (left) and the autumn survey (rights). Bars indicated the deviation from the log mean index, fill colors indicate cohorts. Note different scales on y-axes.'
+#| fig-height: 10
+
+hr_techreport_plot_survey_age_bubble(
+  input_data,
+  age_start = 1,
+  age_end = 16,
+  year_start = 1981,
+  year_end = assessment_year - 1
+)
+```
+
+### Stock maturity at age
+
+Maturity-at-age data, shown in @fig-matplot, are derived from the spring survey. In recent years, the maturity-at-age of the youngest age groups has declined, likely reflecting a northward shift in distribution. Maturity-at-size has also decreased, which is most plausibly explained by a larger proportion of these age groups occurring north of Iceland -- an area where the proportion of mature individuals has historically been low.
+
+```{r}
+#| label: fig-matplot
+#| fig-cap: 'Haddock in division 5a. Maturity at age in the survey. Bars are coloured by cohort. The values are used to calculate the spawning stock.'
+#| fig-height: 6
+
+hr_techreport_plot_maturity(
+  input_data,
+  age_start = 2,
+  age_end = 10,
+  year_start = 1985,
+  year_end = assessment_year - 1
+)
+```
+
+## Data analyses
+
+### Analytical assessment
+
+This stock was last benchmarked in 2025 as part of a harvest control rule evaluation (@ICES2025wkicegad). The assessment framework was updated to a state-space statistical catch-at-age model (SAM; @SAM). The model spans from 1979 onward and tracks ages 1 to 12, with age 12 defined as a plus group. Natural mortality is assumed to be 0.2 for all age groups, and selectivity-at-age is allowed to vary over time.
+
+Given that haddock are known to spawn between April and the end of May, the ratio of fishing and natural mortality before spawning was set at 0.4 and 0.3, respectively.
+
+
+```{r}
+#| label: fig-selectionplot
+#| fig-cap: 'Haddock in 5a. Estimated selection by weight, CV pattern, stock recruitment relationship and survey catchability.'
+#| fig-width: 10
+#| fig-height: 8
+#| eval: false
+
+hr_techreport_plot_muppetfit_selection(
+  fit,
+  assessment_year = assessment_year
+)
+```
+
+### Diagnostics
+
+Model fit diagnostics are shown in @fig-modeldiagnplot and @fig-modeldiagnplot2, illustrating residuals for observation and process error, respectively. No concerning patterns are evident in either set of residuals. The overall model fit is further evaluated in @fig-modeldiagnagg, which compares observed and predicted survey biomass.
+
+Historically, biomass estimates from the autumn survey have aligned more closely with model predictions than those from the spring survey. The spring survey tends to show a greater contrast in observed biomass than is reflected in the model output. When comparing biomass levels before and after the mid-2000s peak, the autumn survey suggests higher post-peak biomass, whereas the spring survey indicates similar levels. The assessment model appears to represent a compromise between the two survey indices.
+
+```{r}
+#| label: fig-modeldiagnplot
+#| fig-cap: 'Haddock in division 5a. Residualsfrom the model fit to survey and catch data based on the both the surveys (observation error). Red circles indicate negative residuals (observed < modelled), while blue postive. Residuals are proportional to the area of the circles.'
+#| fig-height: 8
+
+SAMutils::model_resid_plot(sam_fit)
+```
+
+```{r}
+#| label: fig-modeldiagnplot2
+#| fig-cap: 'Haddock in division 5a. Residuals from the model fit to survey and catch data based on the both the surveys (process error). Red circles indicate negative residuals (observed < modelled), while blue postive. Residuals are proportional to the area of the circles.'
+#| fig-height: 8
+
+SAMutils::model_pres_resid_plot(sam_fit)
+```
+
+```{r}
+#| label: fig-modeldiagnagg
+#| fig-cap: 'Haddock in division 5a. Aggregated model fit to the total biomass indices. Note that residual correlation is estimated (see text for further details).'
+
+SAMutils::model_combfit(sam_fit, input_data)
+```
+
+### Model results
+
+The assessment results indicate that the stock declined between 2008 and 2011, as large year classes were replaced by smaller ones (@fig-icesplot). From 2011 to 2017, the stock stabilized due to reduced fishing mortality, and since 2017, stock biomass has increased rapidly, driven by the recruitment of strong year classes into the fishery. The harvest rate is currently estimated to be above the target set by the implemented harvest control rule (HCR), although it remains low by historical standards. The baseline assessment suggests that the stock is at a high level and is expected to remain so in the near future. However, a gradual decline is anticipated as the strong 2019 cohort—currently dominating the catch—is progressively fished down.
+
+The stock–recruitment relationship (@fig-srplot) indicates episodic high recruitment events that can elevate stock levels, as seen at present. Apart from these peaks, recruitment appears steady, with no evidence of impairment. The retrospective analysis (@fig-retroplot) shows an upward revision in recent years, attributed to strong incoming recruitment into the fishable biomass, and the assessment is considered stable as a result.
+
+Some differences have been observed in recent years between model runs depending on which tuning series — spring and/or autumn surveys — are included. However, these differences are currently mostly within the bounds of model uncertainty (@fig-l1plot), though this has not always been the case. When the model is fitted using catch data only, the trend in reference biomass diverges from that of the baseline assessment. Notably, last year’s catch-only assessment suggested a more rapid increase in biomass, highlighting the greater uncertainty in stock status estimates when survey data are excluded.
+
+Estimated selectivity-at-age, shown in @fig-selectionbyage, displays substantial temporal variation. This is consistent with density-dependent growth observed in Icelandic haddock, which affects selectivity patterns over time.
+
+```{r}
+#| label: fig-icesplot
+#| fig-cap: "Haddock in division 5a. Summary from assessment. Dashed vertical line indicates the assessment year and yellow shaded region the uncertainty as estimated by the model. Dashed horizontal lines indicate the target harvest rate and MGT Btrigger within the harvest control rule. The black horizontal line indicates Blim."
+#| fig-height: 8
+
+SAMutils::model_ices_plot(sam_fit, input_data) +
+  geom_line(data = tibble::tibble(year = sam_fit$fit$data$years, variable='ssb', median=ref_points$B_lim)) + 
+  geom_line(data = tibble::tibble(year = sam_fit$fit$data$years, variable='ssb', median=ref_points$MGT_btrigger), linetype = 2) + 
+  geom_line(data = tibble::tibble(year = sam_fit$fit$data$years, variable='hr', median=ref_points$HR_mgt), linetype = 2) + 
+#  geom_line(data = tibble::tibble(year = sam_fit$fit$data$years, variable='hr', median=ref_points$HR_mgt), linetype = 2) + 
+  facet_wrap(~variable,scale='free_y',ncol=2,#strip.position = 'left', 
+             labeller = labeller(variable = c(`catch` = 'Landings', hr = 'Harvest Rate', `fbar` = 'F6-10',
+                                           `ref_bio` = 'B45cm+', rec = 'Recruitment', ssb = 'Spawning Stock Biomass')))
+```
+
+```{r}
+#| label: fig-srplot
+#| fig-cap: 'Haddock in 5a. Spawning stock size and recruitment.'
+
+SAMutils::SR_plot(sam_fit)
+```
+
+```{r}
+#| label: fig-l1plot
+#| fig-cap: "Haddock in 5a. Comparision of assessment results where either the spring survey or the autumn survey is omitted from the estimation."
+#| fig-height: 8
+
+SAMutils::model_lo_plot(sam_fit)+
+  facet_wrap(~variable,scale='free_y',ncol=2,#strip.position = 'left', 
+             labeller = labeller(variable = c(`catch` = 'Landings', hr = 'Harvest Rate', `fbar` = 'F6-10',
+                                           `ref_bio` = 'B45cm+', rec = 'Recruitment', ssb = 'Spawning Stock Biomass')))+
+  scale_color_manual(values = c(2,4), labels = c('Spring survey only','Autumn survey only')) +
+  labs(x='Year', color = '') + 
+  theme(legend.position = c(0.65, 0.79), legend.background = element_rect(fill = 'white', linetype = 1,colour = 'black'))  
+```
+
+```{r}
+#| label: fig-retroplot
+#| fig-cap: "Haddock in division 5a. Analytical retrospective analysis of the assessment of haddock with a 5 year peel."
+#| fig-height: 8
+#| eval: false
+
+# TODO: sam_fit$retro - system is computationally singular: reciprocal condition number = 2.187e-29
+SAMutils::model_retro_plot(sam_fit) +
+    facet_wrap(~variable,scale='free_y',ncol=2,#strip.position = 'left', 
+             labeller = labeller(variable = c(`catch` = 'Landings', hr = 'Harvest Rate', `fbar` = 'F6-10',
+                                           `ref_bio` = 'B45cm+', rec = 'Recruitment', ssb = 'Spawning Stock Biomass')))
+```
+
+```{r}
+#| label: fig-selectionbyage
+#| fig-cap: 'Haddock in 5a. Estimated selection at age.'
+#| 
+SAMutils::model_selectivity_plot(sam_fit)
+```
+
+### Short term projections
+
+
+Following the revision of the harvest control rule (HCR) in 2025 (see Management section), short-term projections of stock weights are no longer required for generating catch advice. This is because the harvest rate is now applied to the assessment-year estimate of the reference biomass (`r assessment_year`), defined as haddock ≥45 cm, rather than to the projected biomass for the advisory year (`r assessment_year + 1`).
+
+Nevertheless, short-term projections remain valuable for monitoring the expected development of spawning stock biomass (SSB) over the advisory year and into the subsequent year under the applied HCR. These projections are conducted by applying the HCR for both the advisory year and the following year, using stock and catch weights averaged over the past five years, and recruitment fixed at the mean over the past ten years. A detailed technical description of this procedure is provided in the Stock Annex (@haddockAnnex).
+
+```{r}
+#| label: fig-predcomp
+#| fig-cap: 'Haddock in 5a. Comparison of some of the results of last years assessment assessment based on different tuning data and current assessment tuned with both the surveys'
+#| fig-height: 6
+#| eval: false
+
+# TODO: This hsan't been implemented yet, nor is script_advice combining results of the current run with previous
+#hr_techreport_plot_samfit_predcomp(projections_at_age_hist)
+```
+
+```{r}
+#| label: fig-growthpredplot
+#| fig-cap: 'Haddock in 5a. Input data to the prediction model, where the exponent of the yearfactor (growth multiplier) is estimated to derive the reference biomass in the advisory year, as described in the text.'
+#| eval: false
+
+patchwork::wrap_plots(
+  hr_techreport_plot_wm_left(input_data),
+  hr_techreport_plot_wm_center(input_data),
+  hr_techreport_plot_wm_right(input_data),
+  ncol = 3
+)
+```
+
+```{r}
+#| label: fig-maturityweightplot
+#| fig-cap: 'Haddock in 5a. Maturity at weight as used in the projections.'
+#| eval: false
+
+hr_techreport_plot_maturityweight(
+  input_data,
+  mat_model = "period"
+)
+```
+
+## Management
+
+The Icelandic Ministry of Industries is responsible for the management and legislative implementation of Icelandic fisheries. Each fishing year (1 September–31 August), the Ministry issues regulations governing commercial fishing, including the allocation of total allowable catch (TAC) for stocks subject to catch limits. Haddock in Division 5.a has been managed by TAC since 1987. Landings have generally aligned with the advice provided by the Marine and Freshwater Research Institute (MFRI) and the TAC set by the Ministry (@fig-tachistplot).
+
+However, since the 2001/2002 fishing year, landings have exceeded the set TAC by more than 5% in twelve fishing years. The most substantial overshoot occurred in 2020/2021, when haddock landings exceeded the advice by 33%. These implementation errors are primarily attributed to features of the management system that allow for inter-annual quota transfers and species transformations — i.e., the conversion of TAC between species.
+
+The Icelandic TAC system does not account for catches taken by Norway and the Faroe Islands under bilateral agreements. While the levels of these foreign catches are known in advance, they have only recently been considered by the Ministry when allocating TAC to Icelandic vessels. There is no minimum landing size for haddock in 5.a. Under current agreements, Faroese vessels may fish up to 5,600 tonnes of demersal species annually in Icelandic waters, including a maximum of 1,200 tonnes of cod and 40 tonnes of Atlantic halibut.
+
+The impact of species transformations and quota transfers is illustrated in @fig-transferplot. During the period of high haddock biomass (2002–2007), there was a notable increase in net transfers of quota from other species to haddock. This may partly reflect changes in haddock distribution, as shown in @fig-catchdistplot — particularly in northern areas where fisheries held lower initial haddock quotas. Over the longer term, however, net quota transfers to or from haddock have averaged close to zero.
+
+The introduction of a management plan in 2013 has significantly reduced inter-annual quota transfers. Concurrently, transfers from other species to haddock have increased — likely due to high CPUE in recent years, the ease of catching haddock, and its potential to act as a limiting factor in some mixed fisheries. Additionally, possible underestimation of haddock biomass in recent years may have contributed to increased quota transfers into the haddock fishery. These dynamics were accounted for in the management plan evaluation.
+
+@fig-tachistplot shows the differences between the national TAC and actual landings for haddock in 5.a. In most cases, deviations can be explained by species transformations. Notably, in the 1999/2000 and 2020/2021 fishing years, the Icelandic government adjusted the TAC mid-season. In 2020/2021, the TAC was increased by 8,000 tonnes and reduced by the same amount in the following fishing year.
+
+The current management plan for haddock in Icelandic waters was reviewed by ICES in 2025 (ICES, 2025). Beginning with the 2025/2026 fishing year, the harvest control rule was revised as follows:
+
+If $SSB_{y}\geq B_{trigger}$ then: 
+$$ TAC_{y+1} = 0.35 B_{45cm^+,y} $$ 
+
+If $SSB_{y}< B_{trigger}$ then:
+$$ TAC_{y+1} = 0.35 B_{45cm^+,y} SSB_{y}/B_{trigger}$$ 
+
+The revised harvest control rule retains the same harvest rate and reference biomass definition as the previous HCR. However, the key change is that the harvest rate is now applied to the reference biomass estimated for the assessment year, rather than a projected biomass for the advisory year, as was done previously. As a result, short-term projections of stock weights are no longer required for generating catch advice.
+
+```{r}
+#| label: fig-tachistplot
+#| fig-cap: "Haddock in 5a. Comparison of the realised catches and the set TAC for the fishing operations in Icelandic waters. Note that in the 1999/2000 fishing year the government of Iceland increased TAC mid-season"
+
+hr_techreport_plot_management(
+  advice_hist,
+  tac_hist,
+  landings_by_fishing_year_country,
+  m_labels = tibble::tibble(
+    Year = c('1999/2000','2000/2001','2008/2009','2013/2014','2019/2020','2020/2021'),
+    type = c('F<Fmed','F<Fpa','F<0.35','HR = 0.4', 'HR = 0.35','+8 kt'),
+    value = c(35000,30000,93000,38000,41823, 60672))
+)
+```
+
+```{r}
+#| label: fig-transferplot
+#| fig-cap: 'Haddock in 5a. An overview of the net transfers of quota between years and species transformations in the fishery in 5a.'
+
+hr_techreport_plot_quotatransfer(pcon, assessment_year)
+```
+
+
+## Management considerations
+
+All available indicators from commercial catch data and scientific surveys suggest that haddock in Division 5.a is currently in good condition, a conclusion supported by the stock assessment. At WKICEMSE 2019, the harvest rate applied under the 2013–2018 harvest control rule (HCR) was deemed no longer precautionary. A harvest rate of 0.35 was found to be consistent with both the precautionary approach and the ICES MSY framework (@ICES2019wkicemse). This rate was retained during the 2025 revision of the HCR conducted at WKICEGAD (ICES, 2025), but is now applied to the reference biomass estimated in the assessment year rather than the advisory year.
+
+In `r assessment_year`, the stock is estimated to have increased substantially. However, it is projected to begin declining in the coming years as the above-average year classes that have supported the recent increase move through and out of the fishable biomass. The analytical retrospective analysis revealed a slight negative bias in the estimated spawning stock biomass (SSB). This bias is expected to diminish in future assessments, as the low survey indices from 2020 and 2021 are removed from the retrospective peel and the stock begins its anticipated decline.
+
+## References
 ```{r}
 #| echo: false
 #| output: asis

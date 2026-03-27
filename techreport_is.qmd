@@ -4,7 +4,7 @@ subtitle: "*Melanogrammus aeglefinus*"
 description: " <br> Stofnmatsskýrsla"
 author: "Hafrannsóknastofnun"
 date: "7. June 2024"
-date-format: D MMMM YYYY
+date-format: 6. júní 2025
 format:
   html:
     theme: theme/techreport.scss
@@ -20,12 +20,6 @@ execute:
   echo: false
   warning: false
   message: false
-crossref:
-  fig-title: 'Mynd'
-  tbl-title: 'Tafla.'
-  fig-labels: arabic
-  fig-prefix: Mynd
-  tbl-prefix: Tafla
 bibliography: library.bib
 ---
 
@@ -47,35 +41,604 @@ pal <- c("#A6CEE3", "#1F78B4", "#B2DF8A", "#33A02C",
 ```
 
 ```{r message=FALSE, warning=FALSE}
+library(ggplot2)
 source("config.R")
 source("quarto_setup.R")
 targets::tar_load(c(
-  fig_catchdistplot_selectyrs,
+  input_data,
+  sam_fit,
+  projections_at_age_hist,
+  advice_hist,
+  tac_hist,
+  landings_by_fishing_year_country,
   pax_db
-))
+), store = "_assessment_model")
+pcon <- pax_db
 ```
 
-## Almennar upplýsingar
+## Helstu niðurstöður
 
-Ýsa á Íslandsmiðum (*Melanogrammus aeglefinus*) er tiltölulega stór stofn og einskorðast að mestu við landgrunnið. Þó hafa núllgrúppulirfur og ungviði fundist austur af Grænlandi (ICES svæði 14). Þess fyrir utan hafa engar vísbendingar fundist um seiðarek til annarra svæða. Litlum ýsuafla (mesti afli minna en 10 tonn árið 2016) hefur verið landað frá miðum austur af Grænlandi. Það svæði næst Íslandi þar sem ýsa veiðist í einhverjum mæli eru Færeyjamið, en ýsan þar um slóðir er talin vera annar stofn byggt á erfðafræðirannsóknum. Nær ekkert hefur veiðst af ýsu á Íslands-Færeyjahrygg, hvorki í stofnmælingaleiðöngrum Hafrannsóknastofnunar né í afla. Merkingatilraunir áranna milli 1953 og 1965 gáfu heldur engar vísbendingar um göngur ýsu frá Íslandi til annarra hafsvæða, hvorki ungviðis né kynþroska fisks [@jonsson1996tagging]. Mest endurheimtist í nálægð við merkingastað og á hrygningaslóð við sunnanvert landið. Upplýsingar um stofngerð ýsu við landið eru af skornum skammti.
+- Lífmassi í stofnmælingum jókst jafnt og þétt frá árinu 2011 og náði hámarki á árunum 2023–2025 sem er nærri hámarki áranna 2003–2006.
 
-Ýsa finnst víða á grunnsævi (10-200 m dýpi) við strendur landsins, en þó helst í hlýrri sjó vestur og suður af landinu. Hrygning hefur að mestu átt sér stað suður af landinu. Á hlýindatímum hefur stór hluti ókynþroska ýsu fundist norður af landinu og á þessari öld hefur stærri hluti veiðistofnsins haldið sig norður af landinu, samanborið við seinustu tvo áratugi seinustu aldar.
+- Nýliðunargögn benda til þess að núverandi hámark sé vegna aukinnar nýliðunar áranna 2020–2022. Nýliðun áranna 2023 og 2024 er hins vegar undir meðaltali síðasta áratugs, en fyrstu mælingar benda til að 2025 árgangurinn sé við meðaltal. Því er líklegt að stærð ýsustofnsins minnki á næstu árum.
 
-Sjá nánar um <a href="https://www.hafogvatn.is/is/sjavardyr/ysa" target="_blank"rel="noopener noreferrer">ýsu</a>.
+-	Lengdardreifingar hafa verið stöðugar síðasta áratuginn, sem bendir til reglulegrar nýliðunar, og hlutfall stórrar ýsu í stofninum hefur aukist.
+
+-	Stofnmatið bendir til þess að stofnstærð ýsu sé sú hæsta sem mælst hefur síðan árið 1979, en matið er þó háð talsverðri óvissu.
+
+-	Veiðihlutfall hefur verið nálægt markmiðum aflareglu seinasta áratug.
+
+## Inngangur
+
+Ýsa á Íslandsmiðum (*Melanogrammus aeglefinus*) er tiltölulega stór stofn og einskorðast að mestu við landgrunnið á um 10--200 m dýpi. Hún er algengust í hlýja sjónum fyrir sunnan og vestan land og hrygning er mest suður af landinu. Á hlýskeiðum hefur stór hluti ókynþroska ýsu fundist norður af landinu og á þessari öld hefur stærri hluti veiðistofnsins haldið sig norður af landinu, samanborið við síðustu tvo áratugi seinustu aldar.
+
+Sjá nánar um líffræði <a href="https://www.hafogvatn.is/is/sjavardyr/ysa" target="_blank"rel="noopener noreferrer">ýsu</a>.
 
 ## Veiðar
 
-Veiðar á ýsu hafa ekki breyst mikið seinasta áratuginn, en fjöldi báta sem veiða 95% aflans hefur farið minnkandi (@fig-numvesselplot og @tbl-numboatstab). Afli er skráður frá 250 línubátum, um 60 togurum og 40 dragnótabátum. Mest af ýsu er veidd í botnvörpu og hlutfall ýsuafla í botnvörpu féll úr um 70% í kringum 1995 í um 45% árið 2017, en hefur aukist aftur síðan. Á sama tíma hefur hlutfall ýsu sem veidd er á línu hækkað úr um 15% á árunum 1995-2000 í um 40% á árunum 2011--2017, en hefur lækkað nokkuð síðan. Hlutfall ýsuafla sem fæst í dragnót hefur hins vegar verið nokkuð stöðugt, eða um 15%. Um 2% aflans hafa í seinni tíð verið veidd í önnur veiðarfæri, mest í net. Fyrir 2000 var hlutfallið veitt í net um 10--30% en hefur dregist saman í takti við minni sókn netabáta (@fig-numvesselplot og @fig-landingsbygear). Ýsa, sem veidd er af íslenskum fiskiskipum fæst að stærstum hluta á dýpi minna en 200 m (@fig-depthplot). Helstu ýsumið eru samkvæmt afladagbókum, suður, suðvestur og vestur af landinu (@fig-catchbyarea og @fig-catchdistplot), en þó varð töluverð aukning á afla norður og norðaustur af landinu á árunum 2003--2005 og hefur hlutfall ýsuafla þar haldist hátt síðan.
+Veiðar á ýsu hafa lítið breyst seinasta áratuginn, en þó hefur fjölda báta sem veiða 95 % aflans fækkað (@fig-numvesselplot og @tbl-numboatstab). Um 250 línubátar, 60 togarar og 40 dragnótabátar skrá nú afla ýsu. Mest af ýsu er veidd í botnvörpu. Hlutfall ýsuafla í botnvörpu féll úr um 70 % í kringum 1995 í um 45 % árið 2017, en hefur aukist aftur síðan. Á sama tíma hefur hlutfall ýsu sem veidd er á línu hækkað úr um 15 % á árunum 1995-2000 í um 40 % á árunum 2011--2017, en hefur lækkað nokkuð síðan. Hlutfall ýsuafla sem fæst í dragnót hefur hins vegar verið nokkuð stöðugt, eða um 15 %. Um 2 % aflans hafa í seinni tíð verið veidd í önnur veiðarfæri, mest í net. Á tíunda áratug síðust aldar var hlutfallið sem veitt var í net um 10--30 % en hefur dregist saman í takti við minni sókn netabáta (@fig-landingsbygear). 
+
+Ýsa, sem veidd er af íslenskum fiskiskipum fæst að stærstum hluta á dýpi minna en 200 m (@fig-depthplot). Helstu ýsumið eru suður, suðvestur og vestur af landinu (@fig-catchbyarea og @fig-catchdistplot). Töluverð aukning var á afla norður og norðaustur af landinu á árunum 2003--2005 og hefur hlutfall ýsuafla þar haldist hátt síðan.
 
 ```{r}
-#| label: fig-catchdistplot
-#| fig-cap: 'Ýsa. Útbreiðsla veiða frá öllum veiðarfærum, samkvæmt afladagbókum.'
-hr_techreport_fig_catchdistplot(
-  pax_db,
-  years = fig_catchdistplot_selectyrs
+#| label: fig-numvesselplot
+#| fig-cap: 'Ýsa. Fjöldi skipa og báta (öll veiðarfæri) sem veiddu 95 % heildaraflans hvert ár frá 1994. Vinstri: Sýnt eftir árum. Hægri: Sýnt í samanburði við heildarafla. Gögn frá aflaskráningarkerfi Fiskistofu.'
+
+hr_techreport_plot_numboats(
+  pcon,
+  year_start = 1992,
+  year_end = assessment_year - 1
 )
 ```
 
+```{r}
+#| label: fig-landingsbygear
+#| fig-cap: 'Ýsa. Landaður afli eftir veiðarfærum samkvæmt aflaskráningarkerfi Fiskistofu.'
+hr_techreport_plot_landings_gear(
+  pcon,
+  # TODO: Missing other
+  mfdb_gear_codes = c('LLN', 'DSE', 'BMT')
+)
+```
+
+```{r}
+#| label: tbl-numboatstab
+#| tbl-cap: "Ýsa. Fjöldi íslenskra skipa sem landað hafa ýsu og allur landaður afli eftir veiðarfærum og árum"
+hr_techreport_table_boatsummary(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-depthplot
+#| fig-cap: 'Ýsa. Afli eftir dýpi samkvæmt afladagbókum.'
+
+hr_techreport_plot_catchdepth(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-catchbyarea
+#| fig-cap: 'Ýsa. Útbreiðsla veiða á íslensku veiðisvæði samkvæmt aflaskýrslum.'
+
+hr_techreport_plot_catch_region(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-catchdistplot
+#| fig-cap: 'Haddock in 5a. Spatial distribution of catches by all gears for selected years.'
+hr_techreport_plot_catchspatial(
+  pcon,
+  years = c(2001, 2005, 2010, 2015, assessment_year)
+)
+```
+
+### Aflaþróun
+
+```{r}
+curr.lnd <-
+  dplyr::tbl(pcon, "landings") |>
+  pax::pax_landings_by_gear() |>
+  dplyr::filter(year == assessment_year - 1) |>
+  dplyr::group_by(country) |>
+  dplyr::summarize(catch = sum(catch, na.rm = TRUE) / 1e3) |>
+  dplyr::pull(catch, name = country)
+```
+
+Áætlað er að árið `r assessment_year-1` hafi ýsuaflinn verið `r as.character(round(sum(curr.lnd)/1e3))` þúsund tonn (@fig-landingsplot). Í seinni tíð fór aflinn mest í um 100 þúsund tonn á árunum 2005--2008, sem er nærri hæstu aflatölum sjöunda áratugar seinustu aldar, en hefur síðan lækkað niður í svipuð gildi og á árunum 1975--2000.
+
+Afli erlendra fiskiskipa var áður talsverður hluti af heildarafla ýsu á Íslandsmiðum en eftir stækkun íslensku lögsögunnar hefur afli erlendra skipa verið hverfandi. Undanfarin ár hafa það aðallega verið færeysk skip sem veitt hafa ýsu og var afli þeirra `r round(curr.lnd[['Faroe Islands']]/1e3)` tonn árið 2024.
+
+```{r}
+#| label: fig-landingsplot
+#| fig-cap: 'Ýsa. Skráður afli á Íslandsmiðum síðan 1905.'
+# TODO: This needs more data to accurately report anything
+hr_techreport_plot_landings_country(
+  pcon,
+  year_end = assessment_year - 1
+)
+```
+
+## Yfirlit gagna
+
+Sýnataka úr afla helstu veiðarfæra (dragnót, lína og botnvarpa) er almennt góð. Sýnatakan fylgir að mestu útbreiðslu og árstíðasveiflu veiðanna ( @fig-samplingbymonthplot og @fig-samplingposplot).
+
+
+```{r}
+#| label: fig-samplingbymonthplot
+#| fig-cap: 'Ýsa. Hlutfall sýna eftir mánuðum (súlur) samanborið við landanir eftir mánuðum (svört lína), skipt eftir árum og helstu veiðarfærm. Tölur fyrir ofan súlur sýna heildarfjölda sýna.'
+#| fig-height: 6
+
+hr_techreport_plot_sampling_overview(
+  pcon,
+  mfdb_gear_codes = c('LLN', 'DSE', 'BMT'),
+  year_start = assessment_year - 4,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-samplingposplot
+#| fig-cap: 'Ýsa.  Veiðislóð seinasta árs samkvæmt afladagbókum og staðsetning sýna (krossar) skipt eftir helstu veiðarfærum.'
+
+hr_techreport_plot_sampling_position(
+  pcon,
+  mfdb_gear_codes = c('LLN', 'DSE', 'BMT'),
+  year_start = assessment_year - 1,
+  year_end = assessment_year - 1
+) + ggplot2::theme(legend.position = c(0.7,0.2))
+```
+
+### Landanir og brottkast
+
+Allar skráðar landanir frá Íslandsmiðum fyrir árið 1966, sem og landanir erlendra fiskiskipa til og með árinu 2014, eru skráðar í STATLANT löndunargrunn Alþjóðahafrannsóknaráðsins. Landanir innlendra fiskiskipa frá árinu 1966 eru skráðar af Fiskistofu (áður Fiskifélagið). 
+
+Þó að brottkast sé bannað í botnfiskveiðum á Íslandsmiðum er það þó talið eiga sér stað. Byggt á mati á lengdarháðu brottkasti árin 2001--2018, þar sem gert er ráð fyrir að smáfiski sé frekar hent en stærri fiski, hefur hlutfall brottkasts á ýsu af heildarafla verið lítið seinni ár (\<3% bæði í þyngd og í fjölda, @fig-discards - sjá nánar í @MFRIdiscards2016). Til þess að lágmarka líkur á brottkasti hafa útgerðir möguleika á því að landa undirmáli utan kvóta, að því gefnu að ágóðinn fari í Verkefnasjóð sjávarútvegsins. Að auki er möguleiki á því flytja kvóta milli tegunda.
+
+```{r}
+#| label: fig-discards
+#| fig-cap: 'Ýsa. Mat á lengdarháðu brottkasti eftir veiðarfærum (punktmat og 95 % öryggisbil).'
+
+hr_techreport_plot_discards(species)
+```
+
+### Lengdardreifing landaðrar ýsu
+
+@tbl-lengthsamples sýnir fjölda sýna og lengdarmælinga sem safnað er úr afla. Lengdardreifing ýsu úr afla eftir árum er sýnd á @fig-commldistplot. Stærðarsamsetning afla á línu og í botnvörpu virðist nokkuð stöðug, að mestu ýsa milli 40 og 70 cm. Ýsa veidd í net er stærri, en stærðasamsetningin er breytilegri eftir því sem hlutfall stærri fisks er hærra í stofninum.
+
+```{r}
+#| label: fig-commldistplot
+#| fig-cap: 'Ýsa. Lengdardreifing úr afla eftir veiðarfærum og árum'
+#| fig-height: 8
+
+hr_techreport_plot_comm_joy_ldist(
+  pcon,
+  length_min = 100,
+  sampling_types = c(1,2,8),
+  mfdb_gear_codes = c('BMT','DSE','LLN','GIL'),
+  year_start = 1981,
+  year_end = assessment_year - 1
+) + ggplot2::xlim(c(25, 85))
+```
+
+```{r}
+#| label: tbl-lengthsamples
+#| tbl-cap: "Ýsa. Fjöldi sýna og lengdarmælinga úr lönduðum afla."
+
+hr_techreport_table_lengthsamples(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1,
+  include_cols = c("lengths")
+)
+```
+
+
+### Aldursgreindur afli
+
+Fjöldi sýna og aldurslesinna fiska úr afla er gefinn í @tbl-otosamples. Afli í fjölda eftir aldri er sýndur á @fig-catagebubble. Líkt og árið á undan var aflinn árið `r assessment_year -1` að stórum hluta samsettur af einstaka sterkum árgöngum á milli lakari árganga (@fig-ageprop). Óvenju mikið hefur þó verið af 11 ára og eldri ýsu í afla síðastliðinn áratug sem stafar m.a. af lægri fiskveiðidánartölu seinni ár.
+
+```{r}
+#| label: tbl-otosamples
+#| tbl-cap: "Ýsa. Fjöldi sýna og kvarna úr lönduðum afla eftir árum og veiðarfærum."
+
+hr_techreport_table_lengthsamples(
+  pcon,
+  year_start = 2000,
+  year_end = assessment_year - 1,
+  include_cols = c("otol")
+)
+```
+
+
+```{r}
+#| label: fig-catagebubble
+#| fig-cap: 'Ýsa. Aldursskiptur afli. Súlur gefa til kynna afla í fjölda eftir aldri og eru litaðar eftir árgangi'
+#| fig-height: 8
+
+hr_techreport_plot_catch_age_bubble(
+  input_data,
+  age_start = 1,
+  age_end = 18,
+  year_start = 1970,
+  year_end = assessment_year - 1
+)
+```
+
+```{r}
+#| label: fig-ageprop
+#| fig-cap: 'Ýsa. Áætluð samsetning heildarafla á ári skipt eftir árgangi.'
+#| fig-height: 8
+
+hr_techreport_plot_catch_age_prop(
+  input_data,
+  age_start = 1,
+  age_end = 18,
+  year_start = 1970,
+  year_end = assessment_year - 1
+)
+```
+
+### Þyngd eftir aldri í afla
+
+Meðalþyngd í afla eftir aldri má sjá á @fig-catwtplot. Aflaþyngdir sýna að samband er milli meðalþyngdar og stofnstærðar. Hærri meðalþyngd er áberandi hjá minni árgöngum (2008--2013) á meðan stærri árgangar (2003--2004) hafa almennt lægri meðalþyngd.  Meðalþyngd eftir aldri hefur hækkað síðan stofninn var í hámarki árin 2005--2009 og er meðalþyngd flestra árganga í stofninum um eða yfir meðaltali. 
+
+
+```{r}
+#| label: fig-catwtplot
+#| fig-cap: 'Ýsa. Aflaþyngdir eftir aldri. Súlur gefa til kynna frávik frá meðalþyngd eftir aldri og eru litaðar eftir árgangi.'
+#| fig-height: 6
+
+hr_techreport_plot_catch_wgt_growth(
+  input_data,
+  age_start = 2,
+  age_end = 12,
+  year_start = 1985,
+  year_end = assessment_year - 1
+)
+```
+
+### Náttúruleg dánartala
+
+Engar upplýsingar eru um náttúrulega dánartölu. Í. stofnmati er gert ráð fyrir að hún sé 0,2 fyrir alla aldurshópa.
+
+## Gögn um afla, sókn og frá rannsóknaleiðöngrum
+
+### Afli á sóknareiningu
+
+Óstaðlaðan afla ýsu á sóknareiningu má sjá á @fig-cpueplot. Afli á sóknareiningu, þar sem ýsa er meira en 50 % aflans í togi, hefur aukist töluvert frá árinu 2000 og er nú í hámarki. Sé horft til allra veiðiferða þar sem ýsa veiddist náði afli á sóknareiningu hámarki á seinni hluta fyrsta áratugar þessarar aldar, minnkaði síðan um og eftir 2010 en hefur síðan aukist aftur. 
+
+Séu þessar tímaraðir bornar saman við niðurstöður leiðangra Hafrannsóknastofnunar má því lesa aðra þróun í stofninum. Það er almennur eiginleiki vísitalna sem byggðar eru á aflagögnum að þær lýsa fleiri þáttum en bara stofnþróun. Til að mynda hækkaði hlutfall stofnsins norður af Íslandi verulega eftir 2003, auk þess sem að stærðarhlutföll hafa breyst töluvert vegna breytinga á veiðimynstri og sókn. Sé t.d. horft til vísitölu fisks stærri en 60 cm sést að sá hluti stofnsins hefur aldrei mælst stærri en síðustu tvö ár (@fig-fourplot)
+
+```{r}
+#| label: fig-cpueplot
+#| fig-cap: 'Ýsa. Afli  á  sóknareiningu  skipt eftir helstu  veiðarfæraflokkum.  Brotalínur  gefa  til  kynna afla  á  sóknareiningu  þar  sem  meira  en  50 %  aflans í togi  var  ýsa  en  heilar  línur  allar skráningar  þar  sem  ýsa  veiddist. Athugið  að breyting átti sér stað í september 1999 þar sem öll skip voru skyldug til að skila inn afladagbók en fyrir þann tíma voru skip minni en 10 brúttólestir undanskilin þeirri skyldu.'
+
+hr_techreport_plot_cpue(
+  pcon,
+  year_start = 1980,
+  year_end = assessment_year - 1
+)
+```
+
+### Gögn frá rannsóknaleiðöngrum
+
+Upplýsingum um vistfræði ýsu á Íslandsmiðum er safnað í tveimur reglubundnum rannsóknaleiðöngrum, stofnmælingu botnfiska að vori (SMB) og að hausti (SMH). SMB hefur farið fram árlega síðan 1985 og nær yfir helstu útbreiðslusvæði ýsunnar [@handbokSMB]. SMH hefur farið fram árlega frá árinu 1996, að slepptu árinu 2011 [@handbokSMH]. Þó að báðir stofnmælingaleiðangrarnir (SMB og grunnslóðarstöðvar SMH) hafi upprunalega verið hannaðir til að meta ástand þorskstofnisins þá eru þeir álitnir gefa góða mynd af viðgangi ýsustofnsins. 
+
+@fig-fourplot sýnir þróun vísitalna lífmassa og vísitölur nýliðunar (í fjölda) í SMB og SMH. Breytingar á útbreiðslu í SMB og SMH sýna að stærri hluti lífmassans er nú norðvestur, norður og norðaustur af landinu (@fig-surveybyarea). Stærðarsamsetningu úr rannsóknaleiðöngrum má sjá á @fig-surveyldistplot (í fjölda) og afli á stöð í síðustu leiðöngrum er sýndur á @fig-surveylocationplot.
+
+Góður samhljómur er milli vísitalna úr SMB og SMH, þó að vísitala stórrar ýsu (>60 cm) hafi mælst hærri í SMH á árunum 2013--2015 samanborið við SMB sömu ár. 
+
+Aldursskiptar vísitölur má sjá á @fig-surveyage. Í seinni tíð hefur fjöldi fiska 11 ára og eldri í SMB aukist töluvert, sem er í samræmi við þróun lífmassa >60 cm. Eftir slaka nýliðun áranna 2007-2013 hefur nýliðun farið vaxandi og mælast árgangar 2019--2021 stórir.
+
+```{r}
+#| label: fig-fourplot
+#| fig-cap: 'Ýsa. Vísitölur úr stofnmælingum Hafrannsóknastofnunar. Vísitala úr SMB er táknuð með heilli línu, þar sem skyggð svæði gefa til kynna óvissu í mælingum (staðalfrávik), og vísitala úr SMH er táknuð með punktum, þar sem lóðréttar línur tákna óvissu.'
+#| fig-height: 6
+
+patchwork::wrap_plots(
+  hr_techreport_plot_lbindex(pcon, length_range = c(1,500), var = "si_biomass") + ggplot2::labs(x='',y='Heildarlífmassi'),
+  hr_techreport_plot_lbindex(pcon, length_range = c(45,500), var = "si_biomass") + ggplot2::labs(x='',y='Lífmassi > 45'),
+  hr_techreport_plot_lbindex(pcon, length_range = c(60,500), var = "si_biomass") + ggplot2::labs(x='',y='Lífmassi > 60'),
+  hr_techreport_plot_lbindex(pcon, length_range = c(1,25), var = "si_abund") + ggplot2::labs(x='',y='Fjöldi < 25'),
+  ncol=2
+)
+```
+
+```{r}
+#| label: fig-surveybyarea
+#| fig-cap: 'Ýsa. Breytingar á dreifingu lífmassa vísitölu ýsu í SMB og SMH.'
+#| fig-height: 6
+
+hr_techreport_plot_survey_byarea(
+  pcon
+)
+```
+
+```{r}
+#| label: fig-surveyldistplot
+#| fig-cap: 'Ýsa. Lengdardreifingar úr SMB og SMH.'
+#| fig-height: 7
+
+hr_techreport_plot_survey_location(
+  pcon,
+  assessment_year = assessment_year
+)
+```
+
+```{r}
+#| label: fig-surveylocationplot
+#| fig-cap: 'Ýsa. Útbreiðsla ýsu í SMB í ár og SMH í fyrra. Punktastærð er í hlutfalli við afla í togi.'
+
+hr_techreport_plot_survey_location(
+  pcon,
+  assessment_year = assessment_year
+)
+```
+
+```{r}
+#| label: fig-surveyage
+#| fig-cap: 'Ýsa. Aldursskiptar fjöldavísitölur úr SMB og SMH. Súlur gefa til kynna vísitölu eftir aldri og eru litaðar eftir árgangi.'
+#| fig-height: 8
+
+hr_techreport_plot_survey_age_bubble(
+  input_data,
+  age_start = 1,
+  age_end = 16,
+  year_start = 1981,
+  year_end = assessment_year - 1
+)
+```
+
+### Stofnþyngdir
+
+Meðalþyngd í stofni eftir aldri má sjá á @fig-swtplot. Stofnþyngdir, líkt og aflaþyngdir, sýna samband milli meðalþyngdar og stofnstærðar. Hærri meðalþyngd er áberandi hjá minni árgöngum (2008 til 2013) en stærri árgangar (2003 og 2004) hafa almennt lægri meðalþyngd.  Meðalþyngd eftir aldri hefur hækkað síðan stofninn var í hámarki 2005--2009 og eru eldri árgangar í stofninum um eða yfir meðaltali. Meðalþyngd árganga 2019--2021, sem eru stórir, er hins vegar um eða undir meðalagi í SMB árið 2025.
+
+```{r}
+#| label: fig-swtplot
+#| fig-cap: 'Ýsa. Stofnþyngdir eftir aldri úr SMB. Súlur gefa til kynna frávik frá meðalþyngd eftir aldri og eru litaðar eftir árgangi.'
+#| fig-height: 6
+#| eval: false
+
+# TODO: Icelandic only?
+#growth_sw_plot + 
+#  labs(y='Stofnþyngdir (g)',x='Ár')
+```
+
+### Kynþroski eftir aldri
+
+Upplýsingum um hlutfall kynþroska ýsu eftir aldri er safnað í stofnmælingu botnfiska að vori og má sjá á @fig-matplot. Í seinni tíð hefur ýsa orðið kynþroska seinna og eru þessar breytingar mögulega tengdar tilfærslu ýsunnar til norðurs í kaldari sjó þar sem ýsa er almennt eldri við kynþroska.
+
+```{r}
+#| label: fig-matplot 
+#| fig-cap: 'Ýsa. Kynþroski (úr SMB) eftir aldri. Súlur gefa til kynna frávik frá meðalkynþroska eftir aldri og litaðar eftir árgangi. Gögnin eru notuð til þess að reikna stærð hrygningarstofns.'
+
+hr_techreport_plot_maturity(
+  input_data,
+  age_start = 2,
+  age_end = 10,
+  year_start = 1985,
+  year_end = assessment_year - 1
+) + labs(y='Kynþroski (%)',x='Ár')
+```
+
+
+## Úrvinnsla gagna
+
+### Stofnmat
+
+Stofnmatsaðferðin sem beitt er fyrir ýsu var endurskoðuð á rýnifundi Alþjóðahafrannsóknaráðsins árið 2025 (@ICES2025wkicegad). Á þeim fundi var aflareglan einnig enduskoðuð. Stofnmatið byggir nú á tölfræðilegu aldurs-aflalíkani (SAM; @SAM). Líkanið byggir á gögnum frá árinu 1979 til ársins í ár, þar sem fylgst er með ýsu á aldursbilinu 1 til 12+ ára, þar sem 12+ ára eru 12 ára og eldri fiskur (plúsgrúppa). Náttúruleg dánartala er sett sem 0.2 að meðaltali fyrir alla aldurshópa. Valmynstur veiðanna er breytilegt eftir aldri og árum.
+
+Hlutfall fiskveiðidánartölu fyrir hrygningu er sett sem 0.4 og fyrir náttúrulegrar dánartölu fyrir hrygningu sem 0.3, þar sem hrygningatími ýsu er talinn vera frá apríl til loka maí.
+
+```{r}
+#| label: fig-selectionplot
+#| fig-cap: 'Ýsa. Metið þyngdarháð veiðimynstur, vigtun aldurvísitalna, samband hrygningarstofns og nýliðunar, og veiðanleiki úr stofnmælingum.'
+#| fig-width: 10
+#| fig-height: 8
+#| eval: false
+
+hr_techreport_plot_muppetfit_selection(
+  fit,
+  assessment_year = assessment_year
+)
+```
+
+### Inntaksgögn stofnmats
+
+Stofnmatið byggir á fjórum gagnastoðum sem lýst er hér að ofan. Það eru SMB og SMH, sýnataka úr afla og landaður afli. Gögn úr veiðum eru notuð til þess að búa til aldursskiptan afla sem, ásamt aldursskiptum vísitölum úr SMB og SMH, eru borin saman við úttak líkansins í gegnum vegið líknafall til þess að meta stika líkansins. Afla- og stofnþyngdir koma úr sýnatöku úr afla og SMB. Kynþroski eftir aldri er einnig metinn byggt á gögnum úr SMB. Fyrir tímabilið 1979-1985, þ.e.a.s. áður en SMB hófst, eru stofnþyngdir og hlutfall kynþroska eftir aldri sett það sama og árið 1985. Nánari lýsingu á stofnmatsaðferðinni má finna í stofnviðauka Alþjóðahafrannsóknaráðsins um ýsu (@haddockAnnex).
+
+### Greining á níðurstöðum stofnmats
+
+Mátgæði líkansins eru sýnd á @fig-modeldiagnplot og @fig-modeldiagnplot2 þar sem ekkert mynstur er greinanlegt í leifum líkansins. Þegar horft er til mátgæða fyrir heildarvísitölu ýsu (sjá @fig-modeldiagnagg sem sýnir spáða vísitölu bornar saman við mælingar) sést að líkanið spáir illa fyrir toppi vísitölunnar úr SMB og ofmetur stofnstærðina eftir að vísitalan fer lækkandi. Þessi frávik eru ekki eins áberandi fyrir SMH en hið gagnstæða virðist eiga við um mátgæðin við SMB gögnin. Þegar horft er til gildanna í tímaröð heildarvísitölu fyrir og eftir hámarkið má sjá að SMH gefur til kynna að stofninn sé stærri en fyrir hámark, en á sama tíma er SMB að gefa til kynna að stofninn sé á svipuðum slóðum og fyrir hámarkið. Því virðist líkanið fara til bil beggja vísitalna.
+
+
+```{r}
+#| label: fig-modeldiagnplot
+#| fig-cap: 'Ýsa. Leifar stofnmatslíkansins  þegar  úttak  líkansins  er  borið  saman  við  aldursskiptar  vísitölur  úr SMB og SMH.  Rauðir hringir tákna neikvæðar leifar (mæligögn < spá líkans), en bláir jákvæðar leifar. Stærð hringja er í hlutfalli við stærð leifa.'
+#| fig-height: 6
+
+SAMutils::model_resid_plot(sam_fit) +
+  facet_wrap(~fleet, ncol=1,
+           labeller = labeller(fleet = c(`Residual catch` = 'Afli',
+                                           `spring` = 'SMB', 
+                                           `autumn` = 'SMH'))) +
+  theme_bw() +
+  labs(y='Aldur', x='Ár', col='Formerki', size ='Stærð')    
+```
+
+```{r}
+#| label: fig-modeldiagnplot2
+#| fig-cap: 'Ýsa. Ferilfrávik stofnmatslíkansins fyrir metinn fjöld og veiðidánartölu eftir árum og aldri. Rauðir hringir tákna neikvæðar leifar (mæligögn < spá líkans), en bláir jákvæðar leifar. Stærð hringja er í hlutfalli við stærð leifa.'
+#| fig-height: 8
+
+SAMutils::model_resid_plot(sam_fit) +
+    facet_wrap(~fleet, ncol=1,
+                         labeller = labeller(fleet = c(`Residual catch` = 'log(F)',
+                                                       `Joint sample residuals log(N)` = 'log(N)'))) +
+  theme_bw() +
+  labs(y='Aldur', x='Ár', col='Formerki', size ='Stærð')
+```
+
+
+```{r}
+#| label: fig-modeldiagnagg
+#| fig-cap: 'Ýsa. Samanburður á niðurstöðum líkans (línur) og heildarvísitölum stofnmælingaleiðangra (punktar).'
+#| fig-height: 6
+
+SAMutils::model_combfit(sam_fit, input_data) +
+  labs(y='Vísitölur',x='Ár')
+```
+
+
+### Niðurstöður stofnmats
+
+Stofninn minnkaði milli áranna 2008 og 2011 þegar stór árgangur hvarf úr veiðinni og smærri árgangar komu í staðinn (@fig-icesplot). Frá 2011 hefur samdrátturinn verið minni eftir því sem fiskveiðidánartala hefur lækkað. Hrygningarstofninn hefur dregist hraðar saman en viðmiðunarstofninn vegna minnkandi hlutfalls kynþroska eftir aldri/stærð. Veiðihlutfallið er lágt í sögulegu samhengi en er þó yfir markmiðum gildandi aflareglu. Stofnmatið gefur til kynna að stofnstærð hafið farið vaxandi undanfarin ár. 
+
+Metið hrygningarstofns-nýliðunarsamband, sem sjá má á @fig-srplot, gefur til kynna talsverðan breytileika í árgangasassessment_yeark en ekki eru skýr merki um að nýliðun hafi skerst vegna bágrar stöðu hrygningarstofnsins á þeim tíma sem stofnmatið nær yfir. Sterkir árgangar hafa, þó sjaldgæfir séu, leitt til þess að stofninn hefur sassessment_yearkst umtalsvert líkt og hefur gerst á síðastliðnum árum. 
+
+Reiknuð endurlitsgreining gefur til kynna leiðréttingu upp á við seinni ár (@fig-retroplot). Það er talið tengjast mikilli aukningu stofnstærðar eftir að sterkir árgangar komu inn í viðmiðunarstofninn. Stofnmatið er þó álitið stöðugt og metið 5 ára Mohns $\rho$ er innan eðlilegra marka.
+
+Samanburður milli mismunandi stofnmatskeyrslna þar sem vísitölum annað hvort úr SMB eða SMH er sleppt gefur til kynna að það hefur lítil áhrif að meta stofninn einungis með öðrum leiðangrinum og eru áhrifin metin innan skekkjumarka (@fig-l1plot). 
+
+
+Veiðimynstur eftir stærð og aldri er sýnd á @fig-selectionbyage. Töluverður breytileiki er í veiðimynstri eftir aldri eins og rætt var hér að ofan. Ýsan sýnir sterk merki um þéttleikaháðan vöxt sem hefur umtalsverð áhrif á veiðimynstur eftir aldri.
+
+
+```{r}
+#| label: fig-icesplot
+#| fig-cap: "Ýsa. Samantekt stofnmats. Lóðrétt brotalína gefur til kynna úttektarár, skyggð svæði sýna 95 % óvissumörk. Lárétt brotin lína sýnir veiðhlutfallið sem stefnt er og aðgerðamörk aflareglunnar. Heil svört lína sýnir varúðarmörk (B~lim~)."
+#| fig-height: 8
+
+SAMutils::model_ices_plot(sam_fit, input_data) +
+  geom_line(data = tibble::tibble(year = sam_fit$fit$data$years, variable='ssb', median=ref_points$B_lim)) + 
+  geom_line(data = tibble::tibble(year = sam_fit$fit$data$years, variable='ssb', median=ref_points$MGT_btrigger), linetype = 2) + 
+  geom_line(data = tibble::tibble(year = sam_fit$fit$data$years, variable='hr', median=ref_points$HR_mgt), linetype = 2) + 
+#  geom_line(data = tibble::tibble(year = sam_fit$fit$data$years, variable='hr', median=ref_points$HR_msy)) + 
+  facet_wrap(~variable,scale='free_y',ncol=2,#strip.position = 'left', 
+             labeller = labeller(variable = c(`catch` = 'Afli', hr = 'Veiðihlutfall', `fbar` = 'F6-10',
+                                           `ref_bio` = 'B45cm+', rec = 'Nýliðun', ssb = 'Hrygningarstofn'))) +
+  labs(x='Ár')
+```
+
+
+
+```{r}
+#| label: fig-retroplot
+#| fig-cap: "Ýsa. 5 ára reiknuð endurlitsgreining á stofnmati."
+#| fig-height: 8
+#| eval: false
+
+# TODO: sam_fit$retro - system is computationally singular: reciprocal condition number = 2.187e-29
+SAMutils::model_retro_plot(sam_fit) +
+  facet_wrap(~variable,scale='free_y',ncol=2,#strip.position = 'left', 
+             labeller = labeller(variable = c(`catch` = 'Afli', hr = 'Veiðihlutfall', `fbar` = 'F6-10',
+                                           `ref_bio` = 'B45cm+', rec = 'Nýliðun', ssb = 'Hrygningarstofn'))) +
+  labs(x='Ár')
+```
+
+```{r}
+#| label: fig-l1plot
+#| fig-cap: "Ýsa. Samanburður á stofnmatsniðurstöðum þar sem annaðhvort SMH eða SMB er sleppt. "
+#| fig-height: 8
+
+SAMutils::model_lo_plot(sam_fit)+
+  facet_wrap(~variable,scale='free_y',ncol=2,#strip.position = 'left', 
+             labeller = labeller(variable = c(`catch` = 'Afli', hr = 'Veiðihlutfall', `fbar` = 'F6-10',
+                                           `ref_bio` = 'B45cm+', rec = 'Nýliðun', ssb = 'Hrygningarstofn'))) +
+  scale_linetype_manual(values = c(2,4), labels = c('SMB','SMH')) +
+  labs(x='Ár', lty = '') + 
+  theme(legend.position = c(0.65, 0.79), legend.background = element_rect(fill = 'white', linetype = 1,colour = 'black'))  
+```
+
+```{r}
+#| label: fig-srplot
+#| fig-cap: 'Ýsa. Metið hygningarstofns-nýliðunarsamband. '
+
+SAMutils::SR_plot(sam_fit) +
+  labs(y='Nýliðun (1 ars)', x = 'Hrygningarstofn')
+```
+
+```{r}
+#| label: fig-selectionbyage
+#| fig-cap: 'Ýsa. Veiðimynstur eftir aldri.'
+
+SAMutils::model_selectivity_plot(sam_fit) -> tmp
+
+tmp[[1]] + 
+  labs(x='Aldur', y = 'Veiðimynstur') + 
+tmp[[2]] + 
+  labs(x='Stofnþyngdir', y = 'Veiðimynstur')  + 
+tmp[[3]] + theme(strip.background = element_blank(),strip.text = element_blank()) + 
+  labs(x = 'Aldur', y='Veiðanleiki') + 
+     patchwork::plot_layout(
+        design = "AB\nCC"
+      )
+```
+
+### Skammtímaspá
+
+Eftir breytingar á aflareglu fyrir ýsu árið 2025 er ráðgjöfin fyrir komandi fiskveiðiár ekki byggð á skammtímaspá (sjá @sec-management) þar sem hún byggir á stærð viðmiðunarstofns á stofnmatsári. Þrátt fyrir það er skammtímaspá notuð til þess að meta áhrif ráðgjafarinnar á þróun lykilstærð eins og stærð hrygningarstofns. Í þeim framreikningum er byggt á stofnþyngdum og kynþroskahlutfalli stofnmatsársins og aflaþyngdum ársins þar á undan auk þess sem að nýliðun er byggð á 10 ára meðaltali. Tæknilega lýsingu má finna í stofnviðauka [sjá @haddockAnnex].
+
+## Fiskveiðistjórnun {#sec-management}
+
+Atvinnuvegaráðuneytið er ábyrgt fyrir stjórnun fiskveiða á hafsvæðinu við Ísland og innleiðingu laga um fiskveiðistjórnun. Ráðuneytið setur reglur um fiskveiðar í atvinnuskyni fyrir hvert fiskveiðiár (frá 1. september til 31. ágúst), þ.m.t. úthlutun fiskveiðiheimilda fyrir hvern fiskistofn sem lýtur slíkri stjórn. Veiðiheimildum fyrir ýsu við Ísland hefur verið úthlutað skv. aflamarki síðan 1987. Leyfilegt aflamark hefur að mestu fylgt ráðgjöf Hafrannsóknastofnunar. Landaður afli hefur hins vegar ítrekað farið yfir sett aflamark (sjá @fig-tachistplot) sem rekja má til tegundatilfærslukerfisins sem leyfir flutning á kvóta frá einni tegund til annarar. Afli fiskveiðiárið 2020/2021 var umfram ráðgjöf m.a. vegna þess að aflaheimildir voru auknar um 8  000 tonn sem dregin voru af heimildum fiskveiðiárið 2021/2022. 
+
+Afli erlendra fiskiskipa er eins og áður sagði lítill og einvörðungu norsk og færeysk fiskiskip sem hafa heimild til veiða við Ísland. Samningurinn við Færeyjar leyfir veiði á 5  600 tonnum af bolfiski, þar af að hámarki 1  200 tonn af þorski og 40 tonn af lúðu. Þessi skip eru ekki partur af aflamarkskerfinu og þar til nýlega var ekki tekið tillit til þeirra þegar heildaraflamark íslenskra fiskiskipa var ákvarðað.
+
+
+Áhrif tegunda- og kvótatilfærslukerfisins má sjá á @fig-transferplot. Myndin sýnir að þegar ýsustofninn var stór var mikið breytt úr öðrum tegundum í ýsu. Þetta má að hluta skýra með tilfærslu stofnsins (sjá @fig-catchdistplot) þar sem ýsuveiðar voru áður nær einvörðungu suður af landinu. Eftir að ýsan færðist norðar var kvótastaða þeirra útgerða sem veiddu meira af ýsu fyrir norðan land minni en það sem var veitt. Þegar horft er til lengri tíma má sjá að meðaltal frávika er nokkuð nálægt núlli. Eftir að aflareglu var komið á árið 2013 minnkaði flutningur veiðiheimilda milli ára, en að sama skapi jókst flutningur frá öðrum tegundum. Þetta gæti verið vegna þess að auðvelt er að veiða ýsu, eins og sjá má á afla á sóknareiningu, auk þess sem að ýsa veiðist mikið í blönduðum veiðum.
+
+Ráðgjöf um heildaraflamark ýsu fylgir aflareglu íslenskra stjórnvalda. Aflaregla var fyrst sett fyrir þennan stofn árið 2013. Aflareglan var síðast rýnd af Alþjóðahafrannsóknaráðinu (ICES, 2025), og uppfærðri aflareglu fyrst beitt fiskveiðiárið 2025/2026. Núgildandi aflaregla er lýst með eftirfarandi formúlum:
+
+Ef $SSB_{y}\geq B_{trigger}$ þá: 
+$$ TAC_{y+1/y} = 0.35 B_{45cm^+,y} $$ 
+
+Ef $SSB_{y}< B_{trigger}$ þá:
+$$TAC_{y+1/y} = 0.35 B_{45cm^+,y} SSB_{y}/B_{trigger}$$ 
+
+Þessi aflaregla byggir á sama viðmiðunarstofni og fyrri reglur en nú er miðað við stærð viðmiðunarstofns á stofnmatsári ($y$) í stað ráðgjafarárs ($y+1$) áður. Því er ekki lengur þörf á skammtímaspá um stofn- og aflaþyngdir. 
+
+```{r}
+#| label: fig-tachistplot
+#| fig-cap: "Ýsa. Samanburður á heildarafla og aflamarki í íslenskri lögsögu."
+
+hr_techreport_plot_management(
+  advice_hist,
+  tac_hist,
+  landings_by_fishing_year_country,
+  m_labels = tibble::tibble(
+    Year = c('1999/2000','2000/2001','2008/2009','2013/2014','2019/2020','2020/2021'),
+    type = c('F<Fmed','F<Fpa','F<0.35','HR = 0.4', 'HR = 0.35','+8 kt'),
+    value = c(35000,30000,93000,38000,41823, 60672))
+) + 
+  labs(y= 'Landaður afli (kt)') +
+  scale_color_manual(values = c('red','blue','black'), labels = c('Ráðgjöf','Aflamark','Landanir innan fiskveiðiárs'))
+```
+
+```{r}
+#| label: fig-transferplot
+#| fig-cap: 'Ýsa. Nettó tilfærsla á kvóta eftir fiskveiðiárum. Tilfærsla milli tegunda (efri myndir): Jákvæð gildi tákna tilfærslu á kvóta annarra tegunda yfir á ýsu en neikvæð gildi tilfærslu ýsukvóta á aðrar tegundir. Tilfærsla milli ára (neðri myndir): Nettó tilfærsla kvóta á viðkomandi fiskveiðiári'
+
+hr_techreport_plot_quotatransfer(pcon, assessment_year)
+```
+
+## Stöðumat ráðgjafar
+
+Öll merki frá rannsóknaleiðöngrum og úr afla gefa til kynna að ástand ýsustofnsins sé gott um þessar mundir. Stofnmatið rennir frekari stoðum undir það mat. Árið 2019 var veiðihlutfall í aflareglu lækkað úr 0.4 í 0.35 til þess að taka tillit til breytinga á stofninum tengdum seinkuðum kynþroska. Stórir árgangar frá 2018--2020 gefa vísbendingu um að ástand stofnsins verði gott til skemmri tíma litið. Árið `r assessment_year` er stofninn metinn hafa vaxið umtalsvert, en búist er við að stofninn fari minnkandi eftir því sem árgangar 2018--2020 ganga í gegnum veiðistofninn.
+
+## Heimildaskrá
+
+## References
 ```{r}
 #| echo: false
 #| output: asis
