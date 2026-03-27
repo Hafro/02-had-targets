@@ -266,6 +266,22 @@ list(
       )
   ),
 
+  ## Projections
+  tar_target(
+    projections_at_age_file,
+    "data/projections_at_age.csv",
+    format = "file"
+  ),
+  tar_target(
+    projections_at_age_hist,
+    hr_update_hist(
+      projections_at_age_file,
+      assessment_year = assessment_year
+      # TODO: Presumably munge SAMutils::rbya.sam(sam_fit$fit), but do we need to do a projection first?
+    ),
+    format = pax::pax_tar_format_parquet()
+  ),
+
   ## Landings summaries for advice
   tar_target(
     landings_by_fishing_year_country,
