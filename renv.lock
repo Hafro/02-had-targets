@@ -3042,7 +3042,7 @@
       "RemoteUsername": "hafro",
       "RemoteRepo": "hafroreports",
       "RemoteRef": "main",
-      "RemoteSha": "0cb2d229a7ffad922b97e193d271f204c6ac72c5",
+      "RemoteSha": "c11f2d1a4c8456ccd1770b83c53cd34a34ed0ece",
       "Remotes": "github::hafro/SAMutils, github::fishfollower/SAM/stockassessment"
     },
     "haven": {
@@ -4605,7 +4605,7 @@
       "RemoteUsername": "hafro",
       "RemoteRepo": "pax",
       "RemoteRef": "main",
-      "RemoteSha": "f8f044ec4a419f2eab712583a6f70d7df11b79be",
+      "RemoteSha": "7291ba1e85baee4a31c636fd5b73c718973dc401",
       "Remotes": "gitlab@gitlab.hafogvatn.is::dev/mar"
     },
     "pillar": {
