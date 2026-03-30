@@ -95,9 +95,7 @@ hr_techreport_plot_numboats(
 #| fig-cap: 'Haddock in 5a. Landings in tons and percent of total by gear and year'
 hr_techreport_plot_landings_gear(
   pcon,
-  year_end = assessment_year - 1,
-  # TODO: Missing other
-  mfdb_gear_codes = c('LLN', 'DSE', 'BMT')
+  year_end = assessment_year - 1
 )
 ```
 

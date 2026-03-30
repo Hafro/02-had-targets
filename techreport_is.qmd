@@ -96,9 +96,7 @@ hr_techreport_plot_numboats(
 #| fig-cap: 'Ýsa. Landaður afli eftir veiðarfærum samkvæmt aflaskráningarkerfi Fiskistofu.'
 hr_techreport_plot_landings_gear(
   pcon,
-  year_end = assessment_year - 1,
-  # TODO: Missing other
-  mfdb_gear_codes = c('LLN', 'DSE', 'BMT')
+  year_end = assessment_year - 1
 )
 ```
 
