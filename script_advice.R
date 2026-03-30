@@ -39,9 +39,10 @@ list(
     format = "file"
   ),
   tar_target(
-    assessment,
-    hr_assessment_combine(
-      readr::read_csv(historical_assessment_file),
+    assessment_hist,
+    hr_update_hist(
+      hr_assessment_template(),
+      historical_assessment_file,
       # Override any current assessment_year data in file with SAG data
       hr_assessment_from_sag(
         species,
@@ -55,7 +56,7 @@ list(
 
   tar_target(
     data_assessment,
-    hr_advice_data_assessment(assessment),
+    hr_advice_data_assessment(assessment_hist),
     format = pax::pax_tar_format_parquet()
   ),
 

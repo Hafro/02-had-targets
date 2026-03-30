@@ -3034,17 +3034,16 @@
       ],
       "License": "GPL-2",
       "LazyData": "true",
-      "Remotes": "github::hafro/SAMutils, github::fishfollower/SAM/stockassessment",
       "Roxygen": "list(markdown = TRUE)",
       "RoxygenNote": "7.0.2",
+      "Author": "Jamie Lentin [aut, cre] (ORCID: <https://orcid.org/0000-0001-5727-2996>), Bjarki Thor Elvarsson [aut] (ORCID: <https://orcid.org/0000-0001-5855-1188>), William Butler [aut] (ORCID: <https://orcid.org/0000-0002-3286-0748>), Pamela J. Woods [aut], Marine and Freshwater Research Institute (Iceland) [cph]",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "hafroreports",
       "RemoteUsername": "hafro",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "8c03fe403ef8a4f90e8d1d949f3799952a05934b",
-      "NeedsCompilation": "no",
-      "Author": "Jamie Lentin [aut, cre] (ORCID: <https://orcid.org/0000-0001-5727-2996>), Bjarki Thor Elvarsson [aut] (ORCID: <https://orcid.org/0000-0001-5855-1188>), William Butler [aut] (ORCID: <https://orcid.org/0000-0002-3286-0748>), Pamela J. Woods [aut], Marine and Freshwater Research Institute (Iceland) [cph]"
+      "RemoteRepo": "hafroreports",
+      "RemoteRef": "main",
+      "RemoteSha": "0cb2d229a7ffad922b97e193d271f204c6ac72c5",
+      "Remotes": "github::hafro/SAMutils, github::fishfollower/SAM/stockassessment"
     },
     "haven": {
       "Package": "haven",
@@ -4596,19 +4595,18 @@
         "nanoparquet",
         "unittest (>= 1.4)"
       ],
-      "Remotes": "gitlab@gitlab.hafogvatn.is::dev/mar",
       "VignetteBuilder": "knitr",
       "License": "GPL-2",
       "Roxygen": "list(markdown = TRUE)",
       "RoxygenNote": "7.0.2",
+      "Author": "Jamie Lentin [aut, cre] (ORCID: <https://orcid.org/0000-0001-5727-2996>), Bjarki Thor Elvarsson [aut] (ORCID: <https://orcid.org/0000-0001-5855-1188>), William Butler [aut] (ORCID: <https://orcid.org/0000-0002-3286-0748>), Pamela J. Woods [aut], Marine and Freshwater Research Institute (Iceland) [cph]",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
-      "RemoteRepo": "pax",
       "RemoteUsername": "hafro",
-      "RemoteRef": "HEAD",
-      "RemoteSha": "52812afd71598be29f695b87dc7a9d51b930103a",
-      "NeedsCompilation": "no",
-      "Author": "Jamie Lentin [aut, cre] (ORCID: <https://orcid.org/0000-0001-5727-2996>), Bjarki Thor Elvarsson [aut] (ORCID: <https://orcid.org/0000-0001-5855-1188>), William Butler [aut] (ORCID: <https://orcid.org/0000-0002-3286-0748>), Pamela J. Woods [aut], Marine and Freshwater Research Institute (Iceland) [cph]"
+      "RemoteRepo": "pax",
+      "RemoteRef": "main",
+      "RemoteSha": "f8f044ec4a419f2eab712583a6f70d7df11b79be",
+      "Remotes": "gitlab@gitlab.hafogvatn.is::dev/mar"
     },
     "pillar": {
       "Package": "pillar",

@@ -165,13 +165,15 @@ list(
     advice_hist,
     hr_update_hist(
       historical_advice_file,
-      assessment_year = assessment_year,
-      advice = SAMutils::rby.sam(sam_fit$fit, run_ref_bio = TRUE) |>
-        dplyr::filter(variable == 'ref_bio', year == assessment_year) |>
-        dplyr::mutate(median = round(0.35 * median)) |>
-        dplyr::pull(median),
-      advice_basis.en = 'TAC 0.35 x B45+cm',
-      advice_basis.is = '35 % aflaregla'
+      data.frame(
+        assessment_year = assessment_year,
+        advice = SAMutils::rby.sam(sam_fit$fit, run_ref_bio = TRUE) |>
+          dplyr::filter(variable == 'ref_bio', year == assessment_year) |>
+          dplyr::mutate(median = round(0.35 * median)) |>
+          dplyr::pull(median),
+        advice_basis.en = 'TAC 0.35 x B45+cm',
+        advice_basis.is = '35 % aflaregla'
+      )
     )
   ),
 
@@ -185,11 +187,13 @@ list(
     tac_hist,
     hr_update_hist(
       historical_tac_file,
-      assessment_year = assessment_year,
-      ices_area = '5a',
-      tac = advice_hist |>
-        filter(assessment_year == .env$assessment_year) |>
-        dplyr::pull(advice)
+      data.frame(
+        assessment_year = assessment_year,
+        ices_area = '5a',
+        tac = advice_hist |>
+          filter(assessment_year == .env$assessment_year) |>
+          dplyr::pull(advice)
+      )
     ),
     format = pax::pax_tar_format_parquet()
   ),
@@ -276,8 +280,10 @@ list(
     projections_at_age_hist,
     hr_update_hist(
       projections_at_age_file,
-      assessment_year = assessment_year
-      # TODO: Presumably munge SAMutils::rbya.sam(sam_fit$fit), but do we need to do a projection first?
+      data.frame(
+        assessment_year = assessment_year
+        # TODO: Presumably munge SAMutils::rbya.sam(sam_fit$fit), but do we need to do a projection first?
+      )
     ),
     format = pax::pax_tar_format_parquet()
   ),
