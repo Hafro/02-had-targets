@@ -221,7 +221,7 @@ hr_techreport_plot_discards(species)
 
 hr_techreport_plot_comm_joy_ldist(
   pcon,
-  length_min = 100,
+  length_max = 100,
   sampling_types = c(1,2,8),
   mfdb_gear_codes = c('BMT','DSE','LLN','GIL'),
   year_start = 1981,

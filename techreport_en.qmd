@@ -116,7 +116,7 @@ hr_techreport_table_boatsummary(
 hr_techreport_plot_catchdepth(
   pcon,
   year_start = 2000,
-  # TODO: No unknown data
+  # TODO: Unknown data is being filled in by h3_cell, is this sensible?
   year_end = assessment_year - 1
 )
 ```
@@ -176,7 +176,6 @@ Sampling from commercial catches is generally comprehensive, covering the main g
 #| fig-cap: 'Haddock in 5a. Ratio of samples by month (bars) compared with proportion landings by month (solid black line) split by year and main gear types. Numbers of above the bars indicate number of samples by year, month and gear.'
 #| fig-height: 6
 
-# TODO: All over the shop
 hr_techreport_plot_sampling_overview(
   pcon,
   mfdb_gear_codes = c('LLN', 'DSE', 'BMT'),
@@ -224,10 +223,9 @@ Most length measurements are derived from the three main fleet segments: trawl, 
 #| fig-cap: 'Haddock in 5a. Commercial length distributions by gear and year'
 #| fig-height: 10
 
-# TODO: Gone wrong
 hr_techreport_plot_comm_joy_ldist(
   pcon,
-  length_min = 100,
+  length_max = 100,
   sampling_types = c(1,2,8),
   mfdb_gear_codes = c('BMT','DSE','LLN','GIL'),
   year_start = 1981,
