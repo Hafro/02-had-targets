@@ -65,6 +65,7 @@ ggiraph::girafe(ggobj =
   hr_advice_plot_landings(data_landings, assessment_year = assessment_year) +
   hr_advice_plot_recruitment(data_assessment, assessment_year = assessment_year) +
   hr_advice_plot_fpl(data_assessment, assessment_year = assessment_year, ref_points = ref_points) +
+  # TODO: Missing low/high for refbio. Not available in SAG?
   hr_advice_plot_ssb(data_assessment, assessment_year = assessment_year, ref_points = ref_points),
   options = list(
     #ggiraph::opts_hover_inv(css = "opacity:0.7;"),
