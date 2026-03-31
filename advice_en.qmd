@@ -23,19 +23,30 @@ execute:
 source("config.R")
 source("quarto_setup.R")
 targets::tar_load(c(
-  data_landings,
-  data_prog_input,
-  data_prognosis,
-  data_tac,
-  data_assessment
+  assessment_hist
 ))
 targets::tar_load(c(
   advice_hist,
+  landings_by_fishing_year_country,
+  landings_by_gear,
   stock_dev,
   tac_hist
 ), store = "_assessment_model")
 tac <- tac_hist[tac_hist$assessment_year == assessment_year, "tac"]
 tac_last_year <- tac_hist[tac_hist$assessment_year == assessment_year - 1, "tac"]
+
+data_assessment <- hr_advice_data_assessment(assessment_hist)
+data_prog_input <- stock_dev |>
+      dplyr::inner_join(prog_input_notes_table, by = c("name", "year"))
+data_prognosis <- hr_advice_data_prognosis(
+      basis_table,
+      tac_hist,
+      ref_points,
+      stock_dev,
+      assessment_year
+    )
+data_tac <- hr_advice_data_tac(advice_hist, tac_hist, landings_by_fishing_year_country)
+data_landings <- hr_advice_data_landings(landings_by_gear)
 ```
 
 ```{r}
