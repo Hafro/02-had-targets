@@ -358,7 +358,6 @@ patchwork::wrap_plots(
 #| fig-cap: 'Ýsa. Breytingar á dreifingu lífmassa vísitölu ýsu í SMB og SMH.'
 #| fig-height: 6
 
-# TODO: Gap in 2010? skip_years not right?
 hr_techreport_plot_survey_byarea(
   pcon
 )
