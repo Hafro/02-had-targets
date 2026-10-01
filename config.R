@@ -164,3 +164,32 @@ prog_input_notes_table <- dplyr::bind_rows(
     notes.en = "Biomass of fish 45 cm and larger (B~45+~). From the assessment; in tonnes"
   )
 )
+
+# Notes on rows of the advice sheet TAC table (rows 37 onwards: to the last
+# row), moved from hafroreports::hr_advice_table_tac()
+tac_table_footnotes <- list(
+  list(
+    i = 32:36,
+    j = "advice",
+    en = "40 % harvest control rule",
+    is = "40 % aflaregla"
+  ),
+  list(
+    i = function(n) 37:n,
+    j = "advice",
+    en = "35 % harvest control rule",
+    is = "35 % aflaregla"
+  ),
+  list(
+    i = 38,
+    j = "tac",
+    en = "TAC was increased by 8 000 t mid-fishing year",
+    is = "Aflamark aukið um 8 000 t um mitt fiskveiðiár"
+  ),
+  list(
+    i = 39,
+    j = "tac",
+    en = "TAC was decreased by 8 000 t because of the increase in the previous fishing year",
+    is = "Aflamark minnkað um 8 000 t vegna aukningar á fyrra fiskveiðiári"
+  )
+)

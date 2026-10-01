@@ -92,6 +92,11 @@ list(
       pax_db,
       sampling_type = c(1, 2, 8),
       sam_use_10_11_first_2_years = TRUE,
+      # TODO: tow_number is the haul number for commercial samples, so this
+      #   drops hauls numbered above 35 (3-12% of samples in most years since
+      #   2016, see NOTES-from-03-sai.md). Kept to reproduce the assessment;
+      #   remove to use all samples
+      tow_number = 0:35,
       tgroup = list(t1 = 1:6, t2 = 7:12),
       gear_group = list(
         Other = 'Var',
@@ -114,15 +119,16 @@ list(
   ),
   tar_target(
     input_data,
-    hr_input_data_had(
+    # Haddock fill-in rules, see R/input_data.R
+    had_input_data_combine(
       year_start,
       year_end,
       age_start = 0,
       age_end = age_end,
-      input_data_comm_index,
-      input_data_igfs_index,
-      input_data_agfs_index,
-      input_data_landings
+      input_data_comm_index = input_data_comm_index,
+      input_data_igfs_index = input_data_igfs_index,
+      input_data_agfs_index = input_data_agfs_index,
+      input_data_landings = input_data_landings
     ),
     format = pax::pax_tar_format_parquet()
   ),
@@ -130,17 +136,37 @@ list(
   ## Build/run SAM model
   tar_target(
     sam_dat,
-    hr_sam_dat(
-      model_dat = input_data |> dplyr::filter(year <= assessment_year, age > 0),
-      minage = 1,
-      maxage = 12
-    ),
+    {
+      model_dat <- input_data |>
+        dplyr::filter(year <= assessment_year, age > 0)
+      cn <- hr_sam_cn(model_dat, 1, 12)
+      hr_sam_dat(
+        model_dat = model_dat,
+        minage = 1,
+        maxage = 12,
+        cn = cn,
+        # Both surveys; the autumn survey to age 10, without 2011
+        surveys = list(
+          spring = hr_sam_smb(model_dat, 1, 12),
+          autumn = hr_sam_smh(
+            model_dat,
+            1,
+            12,
+            max_age = 10,
+            exclude_years = 2011
+          )
+        ),
+        # 40% of F and 30% of M before spawning
+        pf = hr_sam_pf(model_dat, cn, value = 0.4),
+        pm = hr_sam_pm(model_dat, cn, value = 0.3)
+      )
+    },
     format = 'rds'
   ),
 
   tar_target(
     sam_conf,
-    hr_sam_conf(
+    had_sam_conf(
       sam_dat
     ),
     format = 'rds'
@@ -165,6 +191,7 @@ list(
     advice_hist,
     hr_update_hist(
       historical_advice_file,
+      #assessment_year,
       data.frame(
         assessment_year = assessment_year,
         advice = SAMutils::rby.sam(sam_fit$fit, run_ref_bio = TRUE) |>
